@@ -1,8 +1,10 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TShape from '../components/TShape.astro';
 import { SITE } from '../site';
 import { url } from '../lib/url';
+const latest = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
 ---
 <Base title="Home">
   <h1>{SITE.tagline}</h1>
@@ -12,5 +14,14 @@ import { url } from '../lib/url';
     with a model that makes a decision.
   </p>
   <TShape />
-  <p><a href={url('/projects/')}>See the projects →</a></p>
+  <h2>Latest projects</h2>
+  {latest.length === 0 ? <p class="muted">Coming soon.</p> : (
+    <ul class="plain">
+      {latest.map((p) => (
+        <li class="card"><a href={url(`/projects/${p.id}/`)}>{p.data.title}</a>
+          <span class="muted"> · {p.data.domain}</span></li>
+      ))}
+    </ul>
+  )}
+  <p><a href={url('/projects/')}>All projects →</a></p>
 </Base>
