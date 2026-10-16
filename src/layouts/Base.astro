@@ -15,11 +15,13 @@ const { title, description = SITE.tagline } = Astro.props;
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href={url('/')}>{SITE.name}</a>
-      <nav>
-        <a href={url('/projects/')}>Projects</a>
-        <a href={url('/about/')}>About</a>
-      </nav>
+      <div class="bar">
+        <a class="brand" href={url('/')}>{SITE.name}</a>
+        <nav>
+          <a href={url('/projects/')}>Projects</a>
+          <a href={url('/about/')}>About</a>
+        </nav>
+      </div>
     </header>
     <main><slot /></main>
     <footer class="site-footer">© {new Date().getFullYear()} {SITE.name}</footer>

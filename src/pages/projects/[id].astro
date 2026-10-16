@@ -14,7 +14,7 @@ const d = p.data;
 <Base title={d.title} description={`${d.domain}: ${d.methods.join(', ')}`}>
   <p><a href={url('/projects/')}>← All projects</a></p>
   <h1>{d.title}</h1>
-  <table>
+  <table class="meta">
     <tbody>
       <tr><th>Domain</th><td>{d.domain}</td></tr>
       <tr><th>Data</th><td><a href={d.data_source.url}>{d.data_source.name}</a> ({d.data_source.license})</td></tr>
