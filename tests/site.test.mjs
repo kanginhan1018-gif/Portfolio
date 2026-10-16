@@ -35,3 +35,9 @@ test('about page renders and hides empty contact links', () => {
   assert.match(html, /<h1>About<\/h1>/);
   assert.doesNotMatch(html, /href="mailto:"/);
 });
+
+test('home T section is scroll-driven and shows final state without JS', () => {
+  const html = page('index.html');
+  assert.match(html, /data-tscroll/);
+  assert.doesNotMatch(html, /<section[^>]*data-live/);
+});

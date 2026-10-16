@@ -1,6 +1,8 @@
 ---
 const breadth = ['Data analysis', 'Machine learning', 'Engineering', 'Communication'];
 const depth = ['LP', 'MIP', 'Stochastic', 'Decomposition'];
+// Where each Breadth chip starts before being pulled into the bar (vw, vh, deg).
+const scatter = [[-46, -34, -18], [44, -38, 14], [-40, 30, 10], [48, 26, -12]];
 
 // One continuous outline: rounded outer corners, concave fillets where the stem meets the bar.
 const shape = (W: number, H: number, bh: number, sx: number, sw: number, r: number, f: number) => {
@@ -18,6 +20,8 @@ const variants = [
   { cls: 'narrow', W: 360, H: 470, bh: 200, sx: 60, sw: 240, r: 24, f: 20 },
 ].map((v) => ({ ...v, d: shape(v.W, v.H, v.bh, v.sx, v.sw, v.r, v.f), vars: `--ar:${v.W}/${v.H};--bh:${pct(v.bh, v.H)};--sx:${pct(v.sx, v.W)};--sw:${pct(v.sw, v.W)}` }));
 ---
+<section class="tscroll" data-tscroll>
+<div class="stick">
 <figure class="t" aria-label="T-shaped skill model: breadth across the top, depth in mathematical optimization">
   {variants.map((v, i) => (
     <div class={`v ${v.cls}`} style={v.vars} aria-hidden={i === 1 ? 'true' : undefined}>
@@ -33,21 +37,51 @@ const variants = [
       </svg>
       <div class="bar">
         <span class="tag">Breadth</span>
-        <ul>{breadth.map((b) => <li>{b}</li>)}</ul>
+        <ul>{breadth.map((b, k) => <li class="b" style={`--dx:${scatter[k][0]}vw;--dy:${scatter[k][1]}vh;--r:${scatter[k][2]}deg`}>{b}</li>)}</ul>
       </div>
       <div class="stem">
         <span class="tag">Depth</span>
         <strong>Mathematical optimization</strong>
-        <ul>{depth.map((d) => <li>{d}</li>)}</ul>
+        <ul>{depth.map((d, k) => <li class="d" style={`--k:${k}`}>{d}</li>)}</ul>
       </div>
     </div>
   ))}
 </figure>
+<p class="hint">Scroll ↓</p>
+</div>
+</section>
 <style>
-  .t { margin: 32px 0; }
-  .v { position: relative; aspect-ratio: var(--ar); max-width: 640px; margin: 0 auto; filter: drop-shadow(0 10px 24px rgba(79, 70, 229, 0.2)); }
+  .tscroll {
+    --p: 1; position: relative; margin: 24px 0; overflow-x: clip;
+    --a: clamp(0, calc(var(--p) / 0.45), 1);
+    --s: clamp(0, calc((var(--p) - 0.35) / 0.45), 1);
+    --c: clamp(0, calc((var(--p) - 0.7) / 0.3), 1);
+    --ea: calc(var(--a) * var(--a) * (3 - 2 * var(--a)));
+    --es: calc(var(--s) * var(--s) * (3 - 2 * var(--s)));
+    --ec: calc(var(--c) * var(--c) * (3 - 2 * var(--c)));
+  }
+  .tscroll[data-live] { height: 260vh; }
+  .stick { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .tscroll[data-live] .stick { position: sticky; top: 0; height: 100vh; height: 100svh; padding-top: 70px; }
+  .hint { display: none; margin: 12px 0 0; font-size: 13px; letter-spacing: 0.12em; color: var(--muted); opacity: calc(1 - var(--p) * 6); }
+  .tscroll[data-live] .hint { display: block; }
+  .t { margin: 0; width: 100%; }
+  .v { position: relative; aspect-ratio: var(--ar); max-width: 640px; margin: 0 auto; filter: drop-shadow(0 10px 24px rgba(79, 70, 229, 0.2)); transform: scale(calc(0.86 + 0.14 * var(--ea))); }
   .v.narrow { display: none; }
-  svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  svg {
+    position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: var(--ea);
+    clip-path: inset(0 0 calc((1 - var(--es)) * (100% - var(--bh))) 0);
+  }
+  .bar .tag { opacity: calc(0.7 * var(--ea)); }
+  .stem .tag, .stem strong { opacity: var(--ec); }
+  li.b {
+    opacity: var(--ea); filter: blur(calc((1 - var(--ea)) * 6px));
+    transform: translate(calc((1 - var(--ea)) * var(--dx)), calc((1 - var(--ea)) * var(--dy))) rotate(calc((1 - var(--ea)) * var(--r)));
+  }
+  li.d {
+    opacity: var(--ec); filter: blur(calc((1 - var(--ec)) * 4px));
+    transform: translateY(calc((1 - var(--ec)) * (-90px - var(--k) * 24px))) scale(calc(0.7 + 0.3 * var(--ec)));
+  }
   .bar, .stem { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8px 14px; }
   .bar { left: 0; right: 0; top: 0; height: var(--bh); color: var(--fg); }
   .stem { left: var(--sx); width: var(--sw); top: var(--bh); bottom: 0; color: #fff; padding-top: 22px; }
@@ -61,3 +95,21 @@ const variants = [
     .v.narrow { display: block; }
   }
 </style>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-tscroll]');
+  if (el && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.setAttribute('data-live', '');
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const lead = innerHeight * 0.5; // start while the section is still entering
+      const p = (lead - el.getBoundingClientRect().top) / (el.offsetHeight - innerHeight + lead);
+      el.style.setProperty('--p', Math.min(1, Math.max(0, p)).toFixed(4));
+    };
+    const on = () => (raf ||= requestAnimationFrame(update));
+    addEventListener('scroll', on, { passive: true });
+    addEventListener('resize', on);
+    update();
+  }
+</script>
