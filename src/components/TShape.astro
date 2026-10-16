@@ -21,7 +21,6 @@ const variants = [
 ].map((v) => ({ ...v, d: shape(v.W, v.H, v.bh, v.sx, v.sw, v.r, v.f), vars: `--ar:${v.W}/${v.H};--bh:${pct(v.bh, v.H)};--sx:${pct(v.sx, v.W)};--sw:${pct(v.sw, v.W)}` }));
 ---
 <section class="tscroll" data-tscroll>
-<div class="stick">
 <figure class="t" aria-label="T-shaped skill model: breadth across the top, depth in mathematical optimization">
   {variants.map((v, i) => (
     <div class={`v ${v.cls}`} style={v.vars} aria-hidden={i === 1 ? 'true' : undefined}>
@@ -37,7 +36,7 @@ const variants = [
       </svg>
       <div class="bar">
         <span class="tag">Breadth</span>
-        <ul>{breadth.map((b, k) => <li class="b" style={`--dx:${scatter[k][0]}vw;--dy:${scatter[k][1]}vh;--r:${scatter[k][2]}deg`}>{b}</li>)}</ul>
+        <ul>{breadth.map((b, k) => <li class="b" style={`--i:${k};--dx:${scatter[k][0]}vw;--dy:${scatter[k][1]}vh;--r:${scatter[k][2]}deg`}>{b}</li>)}</ul>
       </div>
       <div class="stem">
         <span class="tag">Depth</span>
@@ -47,69 +46,55 @@ const variants = [
     </div>
   ))}
 </figure>
-<p class="hint">Scroll ↓</p>
-</div>
 </section>
 <style>
-  .tscroll {
-    --p: 1; position: relative; margin: 24px 0; overflow-x: clip;
-    --a: clamp(0, calc(var(--p) / 0.45), 1);
-    --s: clamp(0, calc((var(--p) - 0.35) / 0.45), 1);
-    --c: clamp(0, calc((var(--p) - 0.7) / 0.3), 1);
-    --ea: calc(var(--a) * var(--a) * (3 - 2 * var(--a)));
-    --es: calc(var(--s) * var(--s) * (3 - 2 * var(--s)));
-    --ec: calc(var(--c) * var(--c) * (3 - 2 * var(--c)));
-  }
-  .tscroll[data-live] { height: 260vh; }
-  .stick { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .tscroll[data-live] .stick { position: sticky; top: 0; height: 100vh; height: 100svh; padding-top: 70px; }
-  .hint { display: none; margin: 12px 0 0; font-size: 13px; letter-spacing: 0.12em; color: var(--muted); opacity: calc(1 - var(--p) * 6); }
-  .tscroll[data-live] .hint { display: block; }
+  .tscroll { margin: 32px 0; overflow-x: clip; }
   .t { margin: 0; width: 100%; }
-  .v { position: relative; aspect-ratio: var(--ar); max-width: 640px; margin: 0 auto; filter: drop-shadow(0 10px 24px rgba(79, 70, 229, 0.2)); transform: scale(calc(0.86 + 0.14 * var(--ea))); }
+  .v { position: relative; aspect-ratio: var(--ar); max-width: 640px; margin: 0 auto; filter: drop-shadow(0 10px 24px rgba(79, 70, 229, 0.2)); transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
   .v.narrow { display: none; }
   svg {
-    position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: var(--ea);
-    clip-path: inset(0 0 calc((1 - var(--es)) * (100% - var(--bh))) 0);
-  }
-  .bar .tag { opacity: calc(0.7 * var(--ea)); }
-  .stem .tag, .stem strong { opacity: var(--ec); }
-  li.b {
-    opacity: var(--ea); filter: blur(calc((1 - var(--ea)) * 6px));
-    transform: translate(calc((1 - var(--ea)) * var(--dx)), calc((1 - var(--ea)) * var(--dy))) rotate(calc((1 - var(--ea)) * var(--r)));
-  }
-  li.d {
-    opacity: var(--ec); filter: blur(calc((1 - var(--ec)) * 4px));
-    transform: translateY(calc((1 - var(--ec)) * (-90px - var(--k) * 24px))) scale(calc(0.7 + 0.3 * var(--ec)));
+    position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+    clip-path: inset(0 0 0 0);
+    transition: opacity 0.6s ease, clip-path 1.1s cubic-bezier(0.65, 0, 0.35, 1) 0.9s;
   }
   .bar, .stem { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8px 14px; }
   .bar { left: 0; right: 0; top: 0; height: var(--bh); color: var(--fg); }
   .stem { left: var(--sx); width: var(--sw); top: var(--bh); bottom: 0; color: #fff; padding-top: 22px; }
   .tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; margin-bottom: 6px; }
+  .bar .tag { transition: opacity 0.6s ease 0.5s; }
+  .stem .tag, .stem strong { transition: opacity 0.6s ease 1.7s; }
   .stem strong { font-size: 18px; line-height: 1.3; margin-bottom: 10px; }
   ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; justify-content: center; }
   li { font-size: 13px; padding: 2px 11px; border-radius: 999px; background: var(--glass-strong); border: 1px solid var(--edge); }
   .stem li { background: rgba(255, 255, 255, 0.22); }
+  li.b {
+    --t: calc(var(--i) * 90ms);
+    transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1) var(--t), opacity 0.7s ease var(--t), filter 0.9s ease var(--t);
+  }
+  li.d {
+    --t: calc(1.8s + var(--k) * 110ms);
+    transition: transform 0.8s cubic-bezier(0.34, 1.45, 0.64, 1) var(--t), opacity 0.5s ease var(--t), filter 0.6s ease var(--t);
+  }
+  /* Start state: only when JS armed the animation and it has not played yet. */
+  [data-live]:not(.play) .v { transform: scale(0.92); }
+  [data-live]:not(.play) svg { opacity: 0; clip-path: inset(0 0 calc(100% - var(--bh)) 0); }
+  [data-live]:not(.play) .bar .tag, [data-live]:not(.play) .stem .tag, [data-live]:not(.play) .stem strong { opacity: 0; }
+  [data-live]:not(.play) li.b { opacity: 0; filter: blur(6px); transform: translate(var(--dx), var(--dy)) rotate(var(--r)); }
+  [data-live]:not(.play) li.d { opacity: 0; filter: blur(4px); transform: translateY(-110px) scale(0.7); }
   @media (max-width: 560px) {
     .v.wide { display: none; }
     .v.narrow { display: block; }
   }
 </style>
-
 <script>
   const el = document.querySelector<HTMLElement>('[data-tscroll]');
-  if (el && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (el && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     el.setAttribute('data-live', '');
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const lead = innerHeight * 0.5; // start while the section is still entering
-      const p = (lead - el.getBoundingClientRect().top) / (el.offsetHeight - innerHeight + lead);
-      el.style.setProperty('--p', Math.min(1, Math.max(0, p)).toFixed(4));
-    };
-    const on = () => (raf ||= requestAnimationFrame(update));
-    addEventListener('scroll', on, { passive: true });
-    addEventListener('resize', on);
-    update();
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      requestAnimationFrame(() => el.classList.add('play'));
+      io.disconnect();
+    }, { threshold: 0.6 });
+    io.observe(el);
   }
 </script>
