@@ -1,36 +1,63 @@
 ---
 const breadth = ['Data analysis', 'Machine learning', 'Engineering', 'Communication'];
 const depth = ['LP', 'MIP', 'Stochastic', 'Decomposition'];
+
+// One continuous outline: rounded outer corners, concave fillets where the stem meets the bar.
+const shape = (W: number, H: number, bh: number, sx: number, sw: number, r: number, f: number) => {
+  const R = sx + sw;
+  return [
+    `M${r} 0H${W - r}A${r} ${r} 0 0 1 ${W} ${r}V${bh - r}A${r} ${r} 0 0 1 ${W - r} ${bh}`,
+    `H${R + f}A${f} ${f} 0 0 0 ${R} ${bh + f}V${H - r}A${r} ${r} 0 0 1 ${R - r} ${H}`,
+    `H${sx + r}A${r} ${r} 0 0 1 ${sx} ${H - r}V${bh + f}A${f} ${f} 0 0 0 ${sx - f} ${bh}`,
+    `H${r}A${r} ${r} 0 0 1 0 ${bh - r}V${r}A${r} ${r} 0 0 1 ${r} 0Z`,
+  ].join('');
+};
+const pct = (a: number, b: number) => `${((a / b) * 100).toFixed(2)}%`;
+const variants = [
+  { cls: 'wide', W: 640, H: 380, bh: 130, sx: 205, sw: 230, r: 28, f: 24 },
+  { cls: 'narrow', W: 360, H: 470, bh: 200, sx: 60, sw: 240, r: 24, f: 20 },
+].map((v) => ({ ...v, d: shape(v.W, v.H, v.bh, v.sx, v.sw, v.r, v.f), vars: `--ar:${v.W}/${v.H};--bh:${pct(v.bh, v.H)};--sx:${pct(v.sx, v.W)};--sw:${pct(v.sw, v.W)}` }));
 ---
-<figure class="t" aria-label="T-shaped skill model">
-  <div class="bar">
-    <span class="tag">Breadth</span>
-    <ul>{breadth.map((b) => <li>{b}</li>)}</ul>
-  </div>
-  <div class="stem">
-    <span class="tag">Depth</span>
-    <strong>Mathematical optimization</strong>
-    <ul>{depth.map((d) => <li>{d}</li>)}</ul>
-  </div>
+<figure class="t" aria-label="T-shaped skill model: breadth across the top, depth in mathematical optimization">
+  {variants.map((v, i) => (
+    <div class={`v ${v.cls}`} style={v.vars} aria-hidden={i === 1 ? 'true' : undefined}>
+      <svg viewBox={`0 0 ${v.W} ${v.H}`} preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id={`g-${v.cls}`} gradientUnits="userSpaceOnUse" x1="0" y1={v.bh * 0.55} x2="0" y2={v.H}>
+            <stop offset="0" style="stop-color:var(--glass-strong)" />
+            <stop offset="0.45" style="stop-color:color-mix(in srgb, var(--accent) 70%, transparent)" />
+            <stop offset="1" style="stop-color:color-mix(in srgb, var(--accent2) 75%, transparent)" />
+          </linearGradient>
+        </defs>
+        <path d={v.d} fill={`url(#g-${v.cls})`} style="stroke:var(--edge)" stroke-width="1.2" vector-effect="non-scaling-stroke" />
+      </svg>
+      <div class="bar">
+        <span class="tag">Breadth</span>
+        <ul>{breadth.map((b) => <li>{b}</li>)}</ul>
+      </div>
+      <div class="stem">
+        <span class="tag">Depth</span>
+        <strong>Mathematical optimization</strong>
+        <ul>{depth.map((d) => <li>{d}</li>)}</ul>
+      </div>
+    </div>
+  ))}
 </figure>
 <style>
-  .t { margin: 32px 0; display: flex; flex-direction: column; align-items: center; }
-  .bar, .stem {
-    -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
-    box-shadow: var(--shadow), var(--inset); text-align: center;
+  .t { margin: 32px 0; }
+  .v { position: relative; aspect-ratio: var(--ar); max-width: 640px; margin: 0 auto; filter: drop-shadow(0 10px 24px rgba(79, 70, 229, 0.2)); }
+  .v.narrow { display: none; }
+  svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .bar, .stem { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 8px 14px; }
+  .bar { left: 0; right: 0; top: 0; height: var(--bh); color: var(--fg); }
+  .stem { left: var(--sx); width: var(--sw); top: var(--bh); bottom: 0; color: #fff; padding-top: 22px; }
+  .tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.7; margin-bottom: 6px; }
+  .stem strong { font-size: 18px; line-height: 1.3; margin-bottom: 10px; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; justify-content: center; }
+  li { font-size: 13px; padding: 2px 11px; border-radius: 999px; background: var(--glass-strong); border: 1px solid var(--edge); }
+  .stem li { background: rgba(255, 255, 255, 0.22); }
+  @media (max-width: 560px) {
+    .v.wide { display: none; }
+    .v.narrow { display: block; }
   }
-  .bar {
-    width: 100%; padding: 14px 20px 18px; border-radius: 24px 24px 0 0;
-    background: var(--glass); border: 1px solid var(--edge); border-bottom: 0;
-  }
-  .stem {
-    width: min(60%, 300px); padding: 20px 16px 24px; border-radius: 0 0 24px 24px; margin-top: -1px;
-    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 80%, transparent), color-mix(in srgb, var(--accent2) 70%, transparent));
-    border: 1px solid var(--edge); border-top: 0; color: #fff;
-  }
-  .tag { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin-bottom: 8px; }
-  .stem strong { display: block; font-size: 18px; line-height: 1.3; margin-bottom: 10px; }
-  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-  li { font-size: 13px; padding: 3px 12px; border-radius: 999px; background: var(--glass-strong); border: 1px solid var(--edge); }
-  .stem li { background: rgba(255, 255, 255, 0.2); }
 </style>
