@@ -2,19 +2,20 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import TShape from '../components/TShape.astro';
-import { SITE } from '../site';
 import { url } from '../lib/url';
 const latest = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
 ---
 <Base title="Home">
-  <h1>{SITE.tagline}</h1>
-  <p>
-    I am building a T-shaped profile: deep in mathematical optimization, broad across data analysis,
-    machine learning and engineering. Each project below starts from a real public dataset and ends
-    with a model that makes a decision.
-  </p>
+  <section class="hero">
+    <h1>Operations research,<br />grounded in <em>real data.</em></h1>
+    <p class="lead">
+      Deep in mathematical optimization, broad across data analysis, machine learning and engineering.
+      Every project starts from a public dataset and ends with a model that makes a decision.
+    </p>
+  </section>
+  <h2 class="section-title">Deep in one thing.<br />Broad around it.</h2>
   <TShape />
-  <h2>Latest projects</h2>
+  <h2 class="section-title sm">Latest projects</h2>
   {latest.length === 0 ? <p class="muted">Coming soon.</p> : (
     <ul class="plain">
       {latest.map((p) => (
