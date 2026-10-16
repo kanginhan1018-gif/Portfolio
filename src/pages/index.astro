@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import TShape from '../components/TShape.astro';
+import { SITE } from '../site';
+import { url } from '../lib/url';
+---
+<Base title="Home">
+  <h1>{SITE.tagline}</h1>
+  <p>
+    I am building a T-shaped profile: deep in mathematical optimization, broad across data analysis,
+    machine learning and engineering. Each project below starts from a real public dataset and ends
+    with a model that makes a decision.
+  </p>
+  <TShape />
+  <p><a href={url('/projects/')}>See the projects →</a></p>
+</Base>

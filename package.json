@@ -1,0 +1,18 @@
+{
+  "name": "or-portfolio",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "test": "astro build && node --test tests/site.test.mjs",
+    "test:base": "BASE_PATH=/demo astro build && BASE_PATH=/demo node --test tests/base.test.mjs",
+    "test:edge": "node --test tests/edge.test.mjs"
+  },
+  "dependencies": {
+    "astro": "^6.3.1",
+    "katex": "^0.16.11",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  }
+}

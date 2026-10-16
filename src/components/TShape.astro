@@ -1,0 +1,20 @@
+---
+const breadth = ['Data analysis', 'Machine learning', 'Engineering', 'Communication'];
+---
+<figure class="tshape">
+  <svg viewBox="0 0 320 220" role="img" aria-label="T-shaped skill model: broad bar on top, deep stem below">
+    <rect x="10" y="10" width="300" height="50" rx="8" fill="none" stroke="currentColor" opacity="0.5" />
+    <rect x="120" y="60" width="80" height="150" rx="8" fill="currentColor" opacity="0.85" />
+    <text x="160" y="40" text-anchor="middle" font-size="14" fill="currentColor">Breadth</text>
+    <text x="160" y="140" text-anchor="middle" font-size="13" fill="var(--bg)">Depth</text>
+  </svg>
+  <figcaption>
+    <p><strong>Depth:</strong> Mathematical optimization (LP, MIP, stochastic, decomposition).</p>
+    <p><strong>Breadth:</strong> {breadth.join(' · ')}.</p>
+  </figcaption>
+</figure>
+<style>
+  .tshape svg { width: 100%; max-width: 320px; display: block; margin: 0 auto; color: var(--fg); }
+  .tshape figcaption { margin-top: 12px; }
+  .tshape p { margin: 4px 0; }
+</style>
