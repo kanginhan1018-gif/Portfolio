@@ -29,3 +29,9 @@ test('project page has all 8 sections, metadata and rendered math', () => {
 test('home lists latest project', () => {
   assert.match(page('index.html'), /Template: Case Study Title/);
 });
+
+test('about page renders and hides empty contact links', () => {
+  const html = page('about/index.html');
+  assert.match(html, /<h1>About<\/h1>/);
+  assert.doesNotMatch(html, /href="mailto:"/);
+});

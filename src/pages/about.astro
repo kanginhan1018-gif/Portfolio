@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site';
+---
+<Base title="About">
+  <h1>About</h1>
+  <p>
+    I study operations research and use public datasets to practice the full loop:
+    frame the decision, analyze the data, build the model, and test how robust the answer is.
+  </p>
+  <h2>Skills</h2>
+  <ul>
+    <li><strong>Depth:</strong> linear / mixed-integer / stochastic optimization, decomposition, solver modeling.</li>
+    <li><strong>Breadth:</strong> data analysis, forecasting and ML, Python tooling, clear technical writing.</li>
+  </ul>
+  <h2>Contact</h2>
+  <p>
+    {SITE.email && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
+    {SITE.github && <> · <a href={SITE.github}>GitHub</a></>}
+    {!SITE.email && !SITE.github && <span class="muted">Add your contact links in <code>src/site.ts</code>.</span>}
+  </p>
+</Base>
