@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
 const page = (p) => readFileSync(new URL(`../dist/${p}`, import.meta.url), 'utf8');
 
@@ -27,7 +27,13 @@ test('project page has all 8 sections, metadata and rendered math', () => {
 });
 
 test('home lists latest project', () => {
-  assert.match(page('index.html'), /Template: Case Study Title/);
+  // derive the newest project from the content files (same rule as the home page: sort by date)
+  const dir = new URL('../src/content/projects/', import.meta.url);
+  const fm = (f, k) => readFileSync(new URL(f, dir), 'utf8').match(new RegExp(`^${k}:\\s*"?(.*?)"?\\s*$`, 'm'))[1];
+  const latest = readdirSync(dir).filter((f) => f.endsWith('.md'))
+    .map((f) => ({ title: fm(f, 'title'), date: fm(f, 'date') }))
+    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  assert.ok(page('index.html').includes(latest.title), latest.title);
 });
 
 test('about page renders and hides empty contact links', () => {
