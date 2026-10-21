@@ -76,6 +76,8 @@ test('project page ships en + ko articles, a toggle and no duplicated charts', (
   // both bodies render KaTeX (formulas are shared byte-for-byte)
   const ko = html.slice(html.indexOf('<article lang="ko"'));
   assert.match(ko, /class="katex/);
+  // CommonMark won't close ** between punctuation and a Hangul letter; catch unrendered emphasis
+  assert.doesNotMatch(html.replace(/<pre[\s\S]*?<\/pre>/g, ''), /\*\*/);
 });
 
 test('projects list has a toggle and ko labels keyed by the English tag', () => {
