@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url';
+import Chart from '../../components/Chart.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -25,4 +26,5 @@ const d = p.data;
     </tbody>
   </table>
   <article><Content /></article>
+  {d.charts.map((kind) => <Chart kind={kind} />)}
 </Base>

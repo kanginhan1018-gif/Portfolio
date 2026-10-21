@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "test": "astro build && node --test tests/site.test.mjs",
+    "test": "astro build && node --test tests/site.test.mjs tests/chart.test.mjs",
     "test:base": "BASE_PATH=/demo astro build && BASE_PATH=/demo node --test tests/base.test.mjs",
     "test:edge": "node --test tests/edge.test.mjs"
   },

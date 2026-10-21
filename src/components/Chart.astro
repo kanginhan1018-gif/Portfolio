@@ -1,0 +1,30 @@
+---
+import scaling from '../data/cflp/scaling.json';
+import tradeoff from '../data/cflp/tradeoff.json';
+import { gapChart, timeChart, tradeoffChart } from '../lib/chart';
+
+interface Props { kind: 'gap' | 'time' | 'tradeoff' }
+const { kind } = Astro.props;
+const html =
+  kind === 'gap' ? gapChart(scaling.rows) :
+  kind === 'time' ? timeChart(scaling.rows, scaling.meta.time_limit) :
+  tradeoffChart(tradeoff.rows);
+---
+<figure class="chart-fig"><Fragment set:html={html} /></figure>
+<style is:global>
+  .chart-fig { margin: 32px 0; }
+  .chart { display: block; width: 100%; height: auto; font: 13px -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+  .chart .grid { stroke: var(--line); }
+  .chart .base { stroke: var(--muted); }
+  .chart .tick, .chart .note { fill: var(--muted); }
+  .chart .lbl { fill: var(--fg); font-weight: 700; }
+  .chart .ref { stroke: var(--muted); stroke-dasharray: 6 5; }
+  .chart .line { fill: none; stroke-width: 2; }
+  .chart .s-A { fill: var(--muted); stroke: var(--muted); }
+  .chart .s-B { fill: var(--fg); stroke: var(--fg); }
+  .chart .s-C { fill: var(--accent); stroke: var(--accent); }
+  .chart .line.s-A, .chart .line.s-B, .chart .line.s-C { fill: none; }
+  .chart .bar, .chart .mark { stroke: none; }
+  .chart .dot { fill: var(--muted); }
+  .chart .opt { fill: var(--accent); stroke: var(--bg); stroke-width: 2; }
+</style>

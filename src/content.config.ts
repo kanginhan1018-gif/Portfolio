@@ -13,6 +13,7 @@ const projects = defineCollection({
     tags: z.array(z.string()),
     repo: z.string().url(),
     date: z.coerce.date(),
+    charts: z.array(z.enum(['gap', 'time', 'tradeoff'])).default([]),
   }),
 });
 
