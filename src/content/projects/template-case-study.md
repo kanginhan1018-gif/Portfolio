@@ -10,6 +10,7 @@ solver: "HiGHS via Pyomo"
 tags: ["template", "inventory"]
 repo: "https://github.com/"
 date: 2026-10-16
+draft: true
 ---
 
 Copy this file, rename it, and replace every section. Delete this line.

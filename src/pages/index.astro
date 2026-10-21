@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
+import { getProjects } from '../lib/projects';
 import Base from '../layouts/Base.astro';
 import TShape from '../components/TShape.astro';
 import { url } from '../lib/url';
-const latest = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3);
+const latest = (await getProjects()).slice(0, 3);
 ---
 <Base title="Home">
   <section class="hero">

@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
+import { getProjects } from '../../lib/projects';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url';
 
-const projects = (await getCollection('projects')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const projects = await getProjects();
 const labels = (p: (typeof projects)[number]) => [p.data.domain, ...p.data.methods, ...p.data.tags];
 const allTags = [...new Set(projects.flatMap(labels))].sort((a, b) => a.localeCompare(b));
 ---
