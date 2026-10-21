@@ -7,7 +7,7 @@ data_source:
   license: "Public domain (U.S. government work, 17 U.S.C. 105)"
 methods: ["MIP", "Facility location", "Formulation strengthening"]
 solver: "HiGHS via highspy"
-tags: ["facility location", "network design", "MIP formulations", "logistics"]
+tags: ["network design", "MIP formulations", "logistics"]
 repo: "https://github.com/"
 date: 2026-10-21
 charts: [gap, time, tradeoff]
@@ -25,7 +25,7 @@ There are two layers of data.
 
 - join the two files on GEOID (state + place);
 - keep summary level 162 only;
-- strip Census suffixes (" city", " town", " CDP", " (balance)") from names.
+- strip Census suffixes (" city", " town", " CDP", " (balance)", " metropolitan government") from names.
 
 The script `scripts/build_us_cities.py` regenerates the file, and its sha256 is pinned in `data/SOURCES.md`. (SimpleMaps was tried first, but its download sits behind a Cloudflare challenge.)
 
@@ -109,6 +109,8 @@ Each size was solved with all three formulations. Root gap is $(\text{obj} - \te
 - **The limit is soft.** HiGHS checks the clock only between units of work, so three runs report more than 120 s: 400 × 100 A (157.8 s, still optimal), 500 × 150 A (219.8 s, time limit) and 500 × 150 C (121.2 s, optimal).
 - **What "optimal" means here.** At 500 × 150, B and C both count as optimal but report different costs, 1,247,094 and 1,247,119. They differ by 0.002%, inside the 0.01% tolerance.
 
+The 88.7% root gap for A at 500 × 150 is measured against A's own incumbent (the best plan it found), not the proven optimum; against B's optimum it would be about 88.6%.
+
 The charts are below the article.
 
 - *Final MIP gap:* every run ends at or below the 0.01% tolerance except A at 500 × 150, which is left at 14.8%.
@@ -134,7 +136,7 @@ For a decision-maker, the model pins down the range of network sizes more firmly
 
 - **Split sourcing is allowed.** A customer's demand can be divided across DCs. Single sourcing ($x_{ij} \in \{0,1\}$) is more realistic and much harder, and I did not try it.
 - **One period, deterministic demand.** There is no growth, seasonality, or stochastic or robust demand, and no multi-period opening schedule.
-- **Assumed parameters.** Capacity (3× the average share) and the fixed-cost scale (8000) are my modeling choices, not observed data, and the transport rate is not calibrated to real freight costs. The location of the minimum depends on these choices. The *shape* of the formulation comparison should not.
+- **Assumed parameters.** Capacity (3× the average share) and the fixed-cost scale (8000) are my modeling choices, not observed data, and the transport rate is not calibrated to real freight costs. The location of the minimum depends on these choices. The *shape* of the formulation comparison is not expected to depend on these choices.
 - **Default solver settings.** The only change was 1 thread and seed 0. There is no tuning, no custom cuts and no warm starts. The gap between B and C at the largest size might change with cut or presolve settings.
 - **One instance family.** All instances are nested prefixes of a single US city list with one random seed for fixed costs. OR-Library is used only to validate correctness.
 - **Single-run timings.** Each wall-clock time is a single run on one machine with HiGHS 1.15.1, 1 thread, seed 0, `mip_rel_gap` 1e-4 and a soft 120 s limit, recorded on 2026-10-21. There are no repeats or variance estimates, so read small time differences as noise.
@@ -143,7 +145,7 @@ For a decision-maker, the model pins down the range of network sizes more firmly
 
 The repository is linked in the table above. Python 3.11+, with dependencies pinned in `pyproject.toml` (`highspy==1.15.1`, `numpy`, `pandas`):
 
-    python3 -m venv .venv && .venv/bin/pip install -e .[dev]
+    python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
     .venv/bin/python -m cflp.run     # writes results/{orlib,tradeoff,scaling}.json
 
 A full run took 794 s on the machine used here. The charts on this page are drawn from copies of `scaling.json` and `tradeoff.json` made by that run.
