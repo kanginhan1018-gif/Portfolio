@@ -52,3 +52,12 @@ test('home T section is scroll-driven and shows final state without JS', () => {
   assert.match(html, /data-tscroll/);
   assert.doesNotMatch(html, /<section[^>]*data-live/);
 });
+
+test('home T is a single svg with unique ids and a settled no-JS state', () => {
+  const html = page('index.html');
+  const section = html.match(/<section[^>]*data-tscroll[\s\S]*?<\/section>/)[0];
+  assert.equal((section.match(/<svg/g) ?? []).length, 1);
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(ids).size, ids.length, `duplicate ids: ${ids}`);
+  assert.match(section, /data-liquid d="M0 0 H360 V350 H0 Z"/);
+});
