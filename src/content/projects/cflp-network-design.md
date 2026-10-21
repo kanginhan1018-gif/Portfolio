@@ -8,7 +8,7 @@ data_source:
 methods: ["MIP", "Facility location", "Formulation strengthening"]
 solver: "HiGHS via highspy"
 tags: ["network design", "MIP formulations", "logistics"]
-repo: "https://github.com/"
+repo: "https://github.com/kanginhan1018-gif/cflp-network-design"
 date: 2026-10-21
 charts: [gap, time, tradeoff]
 ---

@@ -3,5 +3,5 @@ export const SITE = {
   name: 'Inhan',
   tagline: 'Operations research, grounded in real data.',
   email: '',
-  github: '',
+  github: 'https://github.com/kanginhan1018-gif',
 };
