@@ -44,8 +44,8 @@ Costs are in model units, not dollars.
 
 The data has no observed capacities or site costs, so two numbers are my own assumptions: the capacity rule and the fixed-cost scale. The exploration here was about where to set them so the decision is not trivial.
 
-- **Capacity rule (changed).** The first version gave each site 1.5× its average share of demand. Total capacity was then only 1.5× total demand, so at least two thirds of the capacity had to be opened just to be feasible. The open/close decision was mostly forced, and the trade-off between fixed and transport cost hardly showed. I replaced it with **3× the average share**: $u_i = 3 \cdot \frac{\sum_j d_j}{n_{\text{candidates}}} \cdot w_i$, where $w_i \propto \sqrt{\text{pop}_i}$ is rescaled to mean 1. Total capacity is now 3× demand, and capacity still binds: on the 100 × 40 instance, any 8 sites are too few (section 6).
-- **Fixed-cost scale (assumption).** I set the scale to 8000 so that the unconstrained optimum on 100 × 40 opens 18 of the 40 sites. That leaves room on both sides of the cost curve.
+- **Capacity rule (changed).** In an earlier version of the instance (not in the shipped results), each site got 1.5× its average share of demand. Total capacity was then only 1.5× total demand, so at least two thirds of the capacity had to be opened just to be feasible. The open/close decision was mostly forced, and the trade-off between fixed and transport cost hardly showed. I replaced it with **3× the average share**: $u_i = 3 \cdot \frac{\sum_j d_j}{n_{\text{candidates}}} \cdot w_i$, where $w_i \propto \sqrt{\text{pop}_i}$ is rescaled to mean 1. Total capacity is now 3× demand, and capacity still binds: on the 100 × 40 instance, any 8 sites are too few (section 6).
+- **Fixed-cost scale (assumption).** I set the scale to 8000 so that the optimum without a forced k on 100 × 40 opens 18 of the 40 sites. That leaves room on both sides of the cost curve.
 - **Instance shape (changed).** I also tried shapes with more candidates than customers, for example 60 demand × 200 candidates. There, nearly every customer gets its own site and all three formulations time out, so these shapes say nothing about formulation strength. I dropped them and grew the grid with more customers than candidates instead.
 
 ## 4. Prediction / forecasting
@@ -81,7 +81,7 @@ $$
 \text{(C)}\qquad \sum_j d_j\,x_{ij} \le u_i\,y_i, \qquad x_{ij} \le y_i \qquad \forall i, j.
 $$
 
-**Why C is stronger.** All three have the same integer solutions, but their LP relaxations are nested: $P_C \subseteq P_B \subseteq P_A$. B implies both rows of A, because $y_i \le 1$ gives $u_i y_i \le u_i$, and $u_i \le \sum_k d_k$ gives $u_i y_i \le (\sum_k d_k) y_i$. Here the largest site holds at most 22% of total demand. C adds rows on top of B. What do the relaxations let a site get away with?
+**Why C is stronger.** All three have the same integer solutions, but their LP relaxations are nested: $P_C \subseteq P_B \subseteq P_A$. B implies both rows of A, because $y_i \le 1$ gives $u_i y_i \le u_i$, and $u_i \le \sum_k d_k$ gives $u_i y_i \le (\sum_k d_k) y_i$. Here the largest site's capacity is at most about 22% of total demand on the 100 × 40 instance, and about 9% on 500 × 150. C adds rows on top of B. What do the relaxations let a site get away with?
 
 - In A, a site can open at $y_i = \text{load}_i / \sum_k d_k$. That is a tiny fraction, so the LP pays almost none of the fixed cost.
 - In B, the fraction rises to $\text{load}_i / u_i$.
@@ -104,7 +104,7 @@ Each size was solved with all three formulations. Root gap is $(\text{obj} - \te
 | 500 × 150 | 88.7% | 26.3% | 0.8% | 219.8 (limit) | 60.2 | 121.2 | 504 / 73 / 178 |
 
 - **C has by far the tightest root bound** at every size: 0.2–1.6%, against 26–38% for B and 68–89% for A. A's bound gets worse as the instance grows.
-- **C is not always the fastest.** It wins at the four smaller sizes. At 500 × 150, B finishes in 60.2 s and C takes 121.2 s, because the 75,000 extra rows $x_{ij} \le y_i$ make every LP heavier. A tighter bound pays off only when fewer nodes outweigh the cost of solving each node's LP.
+- **C is not always the fastest.** It wins at the four smaller sizes. At 500 × 150, B finishes in 60.2 s and C takes 121.2 s and explores more nodes (178 against 73). A likely reason is that the 75,000 extra rows $x_{ij} \le y_i$ make each LP heavier, but per-node cost was not measured. In this data, C's much tighter bound did not translate into a faster solve at the largest size.
 - **Only A hits the time limit.** At 500 × 150 it stopped with a 14.8% gap. Its best plan opened 51 sites at cost 1,266,018, about 1.5% worse than B's proven solution (52 sites, 1,247,094).
 - **The limit is soft.** HiGHS checks the clock only between units of work, so three runs report more than 120 s: 400 × 100 A (157.8 s, still optimal), 500 × 150 A (219.8 s, time limit) and 500 × 150 C (121.2 s, optimal).
 - **What "optimal" means here.** At 500 × 150, B and C both count as optimal but report different costs, 1,247,094 and 1,247,119. They differ by 0.002%, inside the 0.01% tolerance.
@@ -117,7 +117,7 @@ The charts are below the article.
 
 ### Reading the trade-off curve
 
-The cheapest network opens **k = 18 DCs at a total cost of 954,823**, which is the same answer as the free optimum. With **k ≤ 8 no plan is feasible**: even the eight largest candidate sites together hold only about 98% of total demand, so a ninth site is needed just to have room for everyone.
+The cheapest network opens **k = 18 DCs at a total cost of 954,823**, which is the same answer as the free optimum. With **k ≤ 8 no plan is feasible**: on this 100 × 40 instance, even the eight largest candidate sites have capacity equal to only about 98% of total demand, so a ninth site is needed just to have room for everyone.
 
 The bottom of the curve is flat. Every $k$ from 15 to 20 costs within 0.72% of the optimum:
 
@@ -128,7 +128,7 @@ The bottom of the curve is flat. Every $k$ from 15 to 20 costs within 0.72% of t
 
 Away from the bottom, cost climbs fast: k = 12 is +5.9%, k = 9 is +27.1% and k = 40 (every site open) is +34.7%.
 
-For a decision-maker, the model pins down the range of network sizes more firmly than the exact number. Anything from 16 to 19 DCs is within 0.3% of the best plan. Inside that range, the choice can rest on things the model leaves out, such as lease terms, labor markets, or room to grow, at almost no modeled cost. Going below about 14 DCs or above about 22 costs real money: more than 1.9% and 2.2% respectively.
+For a decision-maker, the model pins down the range of network sizes more firmly than the exact number. Anything from 16 to 19 DCs is within 0.3% of the best plan. Inside that range, the choice can rest on things the model leaves out, such as lease terms, labor markets, or room to grow, at almost no modeled cost. Further out, cost rises quickly: k = 14 is +1.96% and k = 22 is +2.27%.
 
 ## 7. Limitations
 
