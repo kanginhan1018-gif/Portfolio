@@ -1,29 +1,48 @@
 ---
+import { getCollection } from 'astro:content';
 import { getProjects } from '../../lib/projects';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url';
+import LangToggle from '../../components/LangToggle.astro';
+import T from '../../components/T.astro';
 
 const projects = await getProjects();
+const koById = new Map((await getCollection('projectsKo')).map((k) => [k.id, k.data]));
 const labels = (p: (typeof projects)[number]) => [p.data.domain, ...p.data.methods, ...p.data.tags];
+// English label → Korean label, matched by position (tests/i18n.test.mjs checks the arrays line up).
+// Filtering always uses the English label as the language-neutral key.
+const koLabel = new Map<string, string>();
+for (const p of projects) {
+  const k = koById.get(p.id);
+  if (!k) continue;
+  const kl = [k.domain, ...k.methods, ...k.tags];
+  labels(p).forEach((t, i) => kl[i] && !koLabel.has(t) && koLabel.set(t, kl[i]));
+}
 const allTags = [...new Set(projects.flatMap(labels))].sort((a, b) => a.localeCompare(b));
 ---
-<Base title="Projects">
-  <h1>Projects</h1>
+<Base title="Projects" i18n>
+  <div class="top-row">
+    <h1><T en="Projects" ko="프로젝트" /></h1>
+    <LangToggle />
+  </div>
   {projects.length === 0 ? (
-    <p class="muted">No projects yet.</p>
+    <p class="muted"><T en="No projects yet." ko="아직 프로젝트가 없습니다." /></p>
   ) : (
     <>
-      <div class="filters" aria-label="Filter by tag">
-        {allTags.map((t) => <button type="button" class="chip" data-tag={t} aria-pressed="false">{t}</button>)}
+      <div class="filters" role="group" aria-label="Filter by tag" data-en-label="Filter by tag" data-ko-label="태그로 거르기">
+        {allTags.map((t) => <button type="button" class="chip" data-tag={t} aria-pressed="false"><T en={t} ko={koLabel.get(t)} /></button>)}
       </div>
       <ul class="plain">
-        {projects.map((p) => (
-          <li class="card" data-tags={labels(p).join('|')}>
-            <h2 style="margin:0 0 4px"><a href={url(`/projects/${p.id}/`)}>{p.data.title}</a></h2>
-            <p class="muted" style="margin:0 0 8px">{p.data.domain} · {p.data.methods.join(', ')} · {p.data.date.getFullYear()}</p>
-            {labels(p).map((t) => <span class="chip">{t}</span>)}
-          </li>
-        ))}
+        {projects.map((p) => {
+          const k = koById.get(p.id);
+          return (
+            <li class="card" data-tags={labels(p).join('|')}>
+              <h2 style="margin:0 0 4px"><a href={url(`/projects/${p.id}/`)}><T en={p.data.title} ko={k?.title} /></a></h2>
+              <p class="muted" style="margin:0 0 8px"><T en={p.data.domain} ko={k?.domain} /> · <T en={p.data.methods.join(', ')} ko={k?.methods.join(', ')} /> · {p.data.date.getFullYear()}</p>
+              {labels(p).map((t) => <span class="chip"><T en={t} ko={koLabel.get(t)} /></span>)}
+            </li>
+          );
+        })}
       </ul>
     </>
   )}

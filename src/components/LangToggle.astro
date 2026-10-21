@@ -1,0 +1,11 @@
+---
+// Segmented "한국어 | English" control. Hidden until the head script marks html[data-js] (no JS → English only).
+---
+<div class="lang-toggle" role="group" aria-label="Language / 언어">
+  <button type="button" data-set-lang="ko" lang="ko" aria-pressed="false">한국어</button>
+  <button type="button" data-set-lang="en" lang="en" aria-pressed="true">English</button>
+</div>
+<script>
+  import { initLang } from '../lib/lang';
+  initLang();
+</script>

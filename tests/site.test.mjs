@@ -61,3 +61,32 @@ test('home T is a single svg with unique ids and a settled no-JS state', () => {
   assert.equal(new Set(ids).size, ids.length, `duplicate ids: ${ids}`);
   assert.match(section, /data-liquid d="M0 0 H360 V350 H0 Z"/);
 });
+
+test('project page ships en + ko articles, a toggle and no duplicated charts', () => {
+  const html = page('projects/cflp-network-design/index.html');
+  assert.match(html, /<article lang="en"/);
+  assert.match(html, /<article lang="ko"/);
+  for (const l of ['ko', 'en']) assert.match(html, new RegExp(`<button[^>]*data-set-lang="${l}"[^>]*aria-pressed="(true|false)"`));
+  assert.match(html, /localStorage\.getItem\('lang'\)/); // pre-paint script in head
+  assert.ok(html.indexOf("getItem('lang')") < html.indexOf('</head>'));
+  const charts = (html.match(/<svg[^>]*class="chart"/g) ?? []).length;
+  assert.equal(charts, 3);
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(ids).size, ids.length, `duplicate ids: ${ids}`);
+  // both bodies render KaTeX (formulas are shared byte-for-byte)
+  const ko = html.slice(html.indexOf('<article lang="ko"'));
+  assert.match(ko, /class="katex/);
+});
+
+test('projects list has a toggle and ko labels keyed by the English tag', () => {
+  const html = page('projects/index.html');
+  assert.match(html, /data-set-lang="ko"/);
+  assert.match(html, /data-tag="Facility location"[^>]*>.*?<span data-l="ko" lang="ko">시설 입지<\/span>/);
+});
+
+test('pages without a translation get no toggle or pre-paint script', () => {
+  for (const p of ['index.html', 'about/index.html']) {
+    const html = page(p);
+    assert.doesNotMatch(html, /data-set-lang|getItem\('lang'\)/, p);
+  }
+});

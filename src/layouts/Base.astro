@@ -3,7 +3,8 @@ import 'katex/dist/katex.min.css';
 import '../styles/global.css';
 import { SITE } from '../site';
 import { url } from '../lib/url';
-const { title, description = SITE.tagline } = Astro.props;
+// i18n: page offers the ko/en toggle; the inline script applies a stored choice before first paint.
+const { title, description = SITE.tagline, i18n = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -12,6 +13,7 @@ const { title, description = SITE.tagline } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title} · {SITE.name}</title>
+    {i18n && <script is:inline>(function(){var h=document.documentElement;h.dataset.js='';try{if(localStorage.getItem('lang')==='ko'){h.lang='ko';h.dataset.lang='ko'}}catch(e){}})()</script>}
   </head>
   <body>
     <header class="site-header">
