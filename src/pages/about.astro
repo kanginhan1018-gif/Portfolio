@@ -5,18 +5,25 @@ import { SITE } from '../site';
 <Base title="About">
   <h1>About</h1>
   <p>
-    I study operations research and use public datasets to practice the full loop:
-    frame the decision, analyze the data, build the model, and test how robust the answer is.
+    I'm applying for operations research roles. I practice the full loop on public data:
+    frame the decision, formulate the model, test it against known benchmarks, and report
+    what the numbers do and do not show.
+  </p>
+  <p>
+    My first case study compares three formulations of capacitated facility location in HiGHS
+    and shows how formulation strength changes solve behavior, including the case where the
+    strongest formulation was not the fastest.
   </p>
   <h2>Skills</h2>
   <ul>
-    <li><strong>Depth:</strong> linear / mixed-integer / stochastic optimization, decomposition, solver modeling.</li>
-    <li><strong>Breadth:</strong> data analysis, forecasting and ML, Python tooling, clear technical writing.</li>
+    <li><strong>Modeling:</strong> mixed-integer programming, formulation strengthening, big-M and capacity linking constraints.</li>
+    <li><strong>Tooling:</strong> Python, HiGHS (highspy), reproducible experiment code on GitHub.</li>
+    <li><strong>Practice:</strong> validating a model against published optima, reporting solver gaps and limits honestly.</li>
   </ul>
   <h2>Contact</h2>
   <p>
-    {SITE.email && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
-    {SITE.github && <> · <a href={SITE.github}>GitHub</a></>}
-    {!SITE.email && !SITE.github && <span class="muted">Add your contact links in <code>src/site.ts</code>.</span>}
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    · <a href={SITE.github}>GitHub</a>
+    · <a href={SITE.linkedin}>LinkedIn</a>
   </p>
 </Base>
