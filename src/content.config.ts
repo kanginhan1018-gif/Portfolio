@@ -18,4 +18,16 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { projects };
+// Korean translations, keyed by the same id as the English entry. Only translated fields;
+// data_source/solver/repo/date/charts always come from the English entry.
+const projectsKo = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects-ko' }),
+  schema: z.object({
+    title: z.string(),
+    domain: z.string(),
+    methods: z.array(z.string()).min(1),
+    tags: z.array(z.string()),
+  }),
+});
+
+export const collections = { projects, projectsKo };
