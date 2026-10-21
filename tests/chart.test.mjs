@@ -7,6 +7,9 @@ test('niceTicks rounds to a 1/2/5 step', () => {
   assert.deepEqual(niceTicks(0, 97, 5), [0, 20, 40, 60, 80, 100]);
   assert.deepEqual(niceTicks(0, 0.5, 5), [0, 0.1, 0.2, 0.3, 0.4, 0.5]);
   assert.deepEqual(niceTicks(3, 3, 5), [3, 3.2, 3.4, 3.6, 3.8, 4]);
+  assert.deepEqual(niceTicks(10, 2, 5), niceTicks(2, 10, 5)); // reversed range is swapped
+  assert.deepEqual(niceTicks(0, 97, 0), [0, 100]); // n <= 0 treated as 1, no NaN
+  assert.deepEqual(niceTicks(0, 97, -3), [0, 100]);
 });
 
 test('logTicks covers the range with powers of ten', () => {

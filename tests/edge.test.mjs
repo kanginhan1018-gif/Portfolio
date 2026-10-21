@@ -20,14 +20,19 @@ test('invalid frontmatter fails the build', () => {
 });
 
 test('zero projects: empty states, no crash', () => {
-  const names = readdirSync(dir).filter((f) => f.endsWith('.md'));
-  for (const f of names) renameSync(`${dir}${f}`, `${root}${f}.bak`);
+  // --force: Astro's glob loader returns early on zero matches without pruning the
+  // content cache (node_modules/.astro/data-store.json), so stale entries would render.
+  const moved = [];
   try {
-    const r = build();
+    for (const f of readdirSync(dir).filter((f) => f.endsWith('.md'))) {
+      renameSync(`${dir}${f}`, `${root}${f}.bak`);
+      moved.push(f);
+    }
+    const r = spawnSync('npx', ['astro', 'build', '--force'], { cwd: root, encoding: 'utf8' });
     assert.equal(r.status, 0, r.stdout + r.stderr);
     assert.match(readFileSync(`${root}dist/projects/index.html`, 'utf8'), /No projects yet/);
     assert.match(readFileSync(`${root}dist/index.html`, 'utf8'), /Coming soon/);
   } finally {
-    for (const f of names) renameSync(`${root}${f}.bak`, `${dir}${f}`);
+    for (const f of moved) renameSync(`${root}${f}.bak`, `${dir}${f}`);
   }
 });

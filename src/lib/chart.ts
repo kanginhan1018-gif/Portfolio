@@ -4,7 +4,9 @@ export type ScalingRow = { n_demand: number; n_candidates: number; form: string;
 export type TradeoffRow = { k_open_forced: number; obj: number | null };
 
 export function niceTicks(min: number, max: number, n: number): number[] {
+  if (min > max) [min, max] = [max, min];
   if (!(max > min)) max = min + 1;
+  n = Math.max(1, n);
   const raw = (max - min) / n;
   const mag = 10 ** Math.floor(Math.log10(raw));
   const r = raw / mag;
@@ -81,6 +83,7 @@ export function gapChart(rows: ScalingRow[]): string {
 }
 
 export function timeChart(rows: ScalingRow[], limit: number): string {
+  // null-gap rows are kept here: a run without a gap still has a solve time (gapChart drops them).
   const xT = 'instance size (demand × candidate DCs)', yT = 'solve time (s, log scale)';
   const S = sizes(rows);
   if (S.length < 2) return noData(xT, yT);
