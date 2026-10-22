@@ -1,0 +1,19 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const papers = await getCollection('papers', (p) => !p.data.draft);
+  return papers.map((p) => ({ params: { id: p.id }, props: { p } }));
+}
+const { p } = Astro.props;
+const { Content } = await render(p);
+const d = p.data;
+---
+<Base title={d.title} description={d.summary}>
+  <p><a href={url('/papers/')}>← 논문 리뷰</a></p>
+  <h1>{d.title}</h1>
+  <p class="muted">{d.date.toISOString().slice(0, 10)}{d.slides && <> · <a href={url(d.slides)}>슬라이드 내려받기 (.pptx)</a></>}</p>
+  <article lang="ko"><Content /></article>
+</Base>

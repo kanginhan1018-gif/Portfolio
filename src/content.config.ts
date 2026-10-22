@@ -30,4 +30,17 @@ const projectsKo = defineCollection({
   }),
 });
 
-export const collections = { projects, projectsKo };
+// Paper reviews: Korean-only blog-style posts, optionally with a slide deck served from public/.
+const papers = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/papers' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    tags: z.array(z.string()),
+    date: z.coerce.date(),
+    slides: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { projects, projectsKo, papers };
