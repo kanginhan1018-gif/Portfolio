@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+
+const papers = (await getCollection('papers', (p) => !p.data.draft)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="Papers" description="논문 리뷰: 최적화 논문을 읽고 수식과 함께 정리합니다.">
+  <h1>논문 리뷰</h1>
+  <p class="muted">최적화 논문을 읽고, 핵심 수식과 함께 정리한 글입니다.</p>
+  {papers.length === 0 ? <p class="muted">준비 중입니다.</p> : (
+    <ul class="plain">
+      {papers.map((p) => (
+        <li class="card">
+          <h2 style="margin:0 0 4px"><a href={url(`/papers/${p.id}/`)}>{p.data.title}</a></h2>
+          <p class="muted" style="margin:0 0 8px">{p.data.date.toISOString().slice(0, 10)} · {p.data.summary}</p>
+          {p.data.tags.map((t) => <span class="chip">{t}</span>)}
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>

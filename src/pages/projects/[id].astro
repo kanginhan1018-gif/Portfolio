@@ -1,9 +1,11 @@
 ---
-import { render } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import { getProjects } from '../../lib/projects';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url';
 import Chart from '../../components/Chart.astro';
+import LangToggle from '../../components/LangToggle.astro';
+import T from '../../components/T.astro';
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -12,20 +14,36 @@ export async function getStaticPaths() {
 const { p } = Astro.props;
 const { Content } = await render(p);
 const d = p.data;
+// Korean entry is optional: without one the page is English-only and has no toggle.
+const koEntry = await getEntry('projectsKo', p.id);
+const KoContent = koEntry ? (await render(koEntry)).Content : null;
+const ko = koEntry?.data;
+// label pairs only when a translation exists, so English-only pages get plain text
+const L = (en: string, k: string) => ({ en, ko: ko ? k : undefined });
 ---
-<Base title={d.title} description={`${d.domain}: ${d.methods.join(', ')}`}>
-  <p><a href={url('/projects/')}>← All projects</a></p>
-  <h1>{d.title}</h1>
+<Base title={d.title} description={`${d.domain}: ${d.methods.join(', ')}`} i18n={!!ko}>
+  <div class="top-row">
+    <p><a href={url('/projects/')}>← <T {...L('All projects', '전체 프로젝트')} /></a></p>
+    {ko && <LangToggle />}
+  </div>
+  <h1><T en={d.title} ko={ko?.title} /></h1>
   <table class="meta">
     <tbody>
-      <tr><th>Domain</th><td>{d.domain}</td></tr>
-      <tr><th>Data</th><td><a href={d.data_source.url}>{d.data_source.name}</a> ({d.data_source.license})</td></tr>
-      <tr><th>Methods</th><td>{d.methods.join(', ')}</td></tr>
-      <tr><th>Solver</th><td>{d.solver}</td></tr>
-      <tr><th>Code</th><td><a href={d.repo}>{d.repo}</a></td></tr>
-      <tr><th>Date</th><td>{d.date.toISOString().slice(0, 10)}</td></tr>
+      <tr><th><T {...L('Domain', '분야')} /></th><td><T en={d.domain} ko={ko?.domain} /></td></tr>
+      <tr><th><T {...L('Data', '데이터')} /></th><td><a href={d.data_source.url}>{d.data_source.name}</a> ({d.data_source.license})</td></tr>
+      <tr><th><T {...L('Methods', '방법')} /></th><td><T en={d.methods.join(', ')} ko={ko?.methods.join(', ')} /></td></tr>
+      <tr><th><T {...L('Solver', '솔버')} /></th><td>{d.solver}</td></tr>
+      <tr><th><T {...L('Code', '코드')} /></th><td><a href={d.repo}>{d.repo}</a></td></tr>
+      <tr><th><T {...L('Date', '날짜')} /></th><td>{d.date.toISOString().slice(0, 10)}</td></tr>
     </tbody>
   </table>
-  <article><Content /></article>
+  {KoContent ? (
+    <>
+      <article lang="en" data-l="en"><Content /></article>
+      <article lang="ko" data-l="ko"><KoContent /></article>
+    </>
+  ) : (
+    <article><Content /></article>
+  )}
   {d.charts.map((kind) => <Chart kind={kind} />)}
 </Base>

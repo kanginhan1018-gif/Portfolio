@@ -1,0 +1,6 @@
+---
+// Inline en/ko text pair; CSS shows one from html[data-lang]. Without a ko string it is plain English text.
+interface Props { en: string; ko?: string }
+const { en, ko } = Astro.props;
+---
+{ko ? <><span data-l="en">{en}</span><span data-l="ko" lang="ko">{ko}</span></> : en}

@@ -22,7 +22,7 @@ test('built case study has three svg charts, each with tooltips', () => {
   const charts = svgs.filter((s) => s.includes('class="chart"'));
   assert.equal(charts.length, 3);
   for (const s of charts) {
-    assert.match(s, /<title>/);
+    assert.match(s, /<title[ >]/);
     assert.match(s, /role="img" aria-label="[^"]+"/);
   }
 });
@@ -34,4 +34,21 @@ test('empty or single-point data renders axes and "no data"', () => {
     assert.match(s, /no data/);
     assert.match(s, /class="axis"/);
   }
+});
+
+test('every translated chart string keeps the same numbers in ko', () => {
+  const scaling = JSON.parse(readFileSync(new URL('../src/data/cflp/scaling.json', import.meta.url), 'utf8'));
+  const tradeoff = JSON.parse(readFileSync(new URL('../src/data/cflp/tradeoff.json', import.meta.url), 'utf8'));
+  const num = (s) => (s.match(/\d+(?:,\d{3})*(?:\.\d+)?%?/g) ?? []).sort().join(' '); // order may differ in ko
+  let n = 0;
+  for (const s of [gapChart(scaling.rows), timeChart(scaling.rows, scaling.meta.time_limit), tradeoffChart(tradeoff.rows)]) {
+    for (const m of s.matchAll(/data-en(-label)?="([^"]*)" data-ko\1="([^"]*)"/g)) {
+      assert.equal(num(m[3]), num(m[2]), m[2]);
+      assert.notEqual(m[3], m[2]);
+      n++;
+    }
+    // rendered text is the English variant (no-JS default)
+    for (const m of s.matchAll(/data-en="([^"]*)" data-ko="[^"]*">([^<]*)</g)) assert.equal(m[2], m[1]);
+  }
+  assert.ok(n > 30, `only ${n} translated strings`);
 });
