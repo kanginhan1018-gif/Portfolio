@@ -17,6 +17,25 @@ charts: [gap, time, tradeoff]
 
 A company ships goods to the biggest US cities. It must choose which cities get a distribution center (DC), and which DC supplies each city. Opening a DC costs a fixed amount. Each DC can only handle so much. Shipping costs more when a city needs more goods or is farther away. The choice is made rarely and is hard to undo. Open too few DCs and there isn't enough capacity, or every shipment travels a long way. Open too many and the company pays for DCs it hardly uses. So the question is: how many DCs, and where? There is a second question for the person building the model: how do you write it so that an ordinary solver (off-the-shelf software that finds the best answer) can solve it fast at realistic sizes?
 
+### Why this project
+
+Most optimization tutorials stop at "write the model, press solve." In practice the same problem can be written in several correct ways, and the choice decides whether the solver finishes in a second or never finishes. I wanted a project that shows this on a problem a business would actually face, with public data, so anyone can check it.
+
+So the project asks two things at once: what is the best network, and which way of writing the model finds it fastest? The second question is the one most case studies skip. I also report where my favorite formulation did not win (section 6), because a result that only shows good news is not worth much.
+
+### Background you need
+
+You do not need an optimization course to follow this page. These are the ideas it relies on:
+
+- **Optimization model.** You list what you can decide (the *variables*), what you want to make small or large (the *objective*), and the rules you must obey (the *constraints*). Here the decisions are which DCs to open and how much each ships to each city; the objective is total cost; the rules are "cover every city" and "respect capacity."
+- **Mixed-integer program (MIP).** An optimization model where some variables must be whole numbers. The on/off switches $y_i$ are yes/no choices, and that is what makes the problem hard: the solver cannot just slide a dial, it has to rule out a huge number of combinations.
+- **Facility location.** A classic problem family: choose where to build facilities, then assign customers to them. "Capacitated" means each facility has a limit on how much it can handle.
+- **Solver.** Software that takes a model and searches for the best answer, with proof. I used HiGHS, which is free and open source.
+- **LP relaxation and root gap.** The solver first pretends the switches may be partly on, which makes the problem easy. That easy answer is a lower bound on the true cost. The distance between it and the final answer is the *root gap*. A small root gap means the solver has less left to prove.
+- **Branch and bound.** After the easy step, the solver splits the problem (one DC open versus closed), solves each part, and discards parts that cannot beat the best plan so far. Each part it checks is a *node*. A tight first estimate means fewer nodes.
+- **Formulation.** The way you write the same problem as constraints. Two formulations can have the same final answers but very different first estimates and speeds. That is what A, B and C in section 5 are.
+- **Big-M.** A constraint of the form "this can only be nonzero if the switch is on," written with a large number M. A large M works but gives a weak first estimate, which is why A is the loose one.
+
 ## 2. Data
 
 There are two layers of data.
