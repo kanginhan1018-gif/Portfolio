@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import { url } from '../../lib/url';
 
-const papers = (await getCollection('papers', (p) => !p.data.draft)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const papers = (await getCollection('papers', (p) => !p.data.draft)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || (a.data.part ?? 0) - (b.data.part ?? 0));
 ---
 <Base title="Papers" description="논문 리뷰: 최적화 논문을 읽고 수식과 함께 정리합니다.">
   <h1>논문 리뷰</h1>

@@ -39,6 +39,7 @@ const papers = defineCollection({
     tags: z.array(z.string()),
     date: z.coerce.date(),
     slides: z.string().optional(),
+    part: z.number().optional(), // order inside a series posted on the same day
     draft: z.boolean().default(false),
   }),
 });
