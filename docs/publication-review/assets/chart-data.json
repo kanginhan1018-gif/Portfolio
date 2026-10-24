@@ -1,0 +1,229 @@
+{
+  "wind-validation": {
+    "source": "BEST1 notebook: cells 0, 1 saved outputs",
+    "note": "서로 다른 평가 구성의 결과이며 성능 개선 전후 비교가 아닙니다.\n10월 자료는 조기종료에도 사용했습니다. 독립 최종 테스트가 아닙니다.",
+    "rows": [
+      {
+        "evaluation": "day_group_oof",
+        "nmae_pct": 4.618
+      },
+      {
+        "evaluation": "october_validation",
+        "nmae_pct": 11.0132
+      }
+    ]
+  },
+  "wind-folds": {
+    "source": "BEST1 notebook: cell 0 saved outputs",
+    "note": "Fold 번호는 시간 순서를 뜻하지 않습니다. 점선은 전체 OOF 오차입니다.\nFold 오차의 단순 평균을 전체 OOF 값으로 대체하지 않았습니다.",
+    "rows": [
+      {
+        "fold": 1,
+        "nmae_pct": 3.9912
+      },
+      {
+        "fold": 2,
+        "nmae_pct": 5.1397
+      },
+      {
+        "fold": 3,
+        "nmae_pct": 3.7472
+      },
+      {
+        "fold": 4,
+        "nmae_pct": 5.7507
+      },
+      {
+        "fold": 5,
+        "nmae_pct": 4.4586
+      }
+    ]
+  },
+  "site-scenarios": {
+    "source": "A_select2 notebook: cell 12 saved output",
+    "note": "용량 요구가 다른 후보의 비교입니다. 같은 서비스 수준의 절감률이 아닙니다.\n인구는 격자·보정 계수의 모형상 지표이며 실제 주민 실측 인원이 아닙니다.",
+    "rows": [
+      {
+        "capacity_mw": 80,
+        "modeled_population_equivalent": 133.64,
+        "transmission_km": 7.06
+      },
+      {
+        "capacity_mw": 100,
+        "modeled_population_equivalent": 144.72,
+        "transmission_km": 6.72
+      },
+      {
+        "capacity_mw": 110,
+        "modeled_population_equivalent": 217.11,
+        "transmission_km": 10.92
+      },
+      {
+        "capacity_mw": 130,
+        "modeled_population_equivalent": 239.69,
+        "transmission_km": 17.18
+      },
+      {
+        "capacity_mw": 160,
+        "modeled_population_equivalent": 323.46,
+        "transmission_km": 16.13
+      }
+    ]
+  },
+  "energy-balance": {
+    "source": "SMR notebook: cell 35 saved 80MW scenario",
+    "note": "80MW 센터 조합에서 별도로 설정한 잔여부하 5MW의 비교입니다.\n충방전 손실 반영 전의 총량입니다. 시간별 공급 가능성·저장 용량과는 별도입니다.",
+    "rows": [
+      {
+        "scenario_capacity_mw": 80,
+        "residual_load_mw": 5,
+        "days": 334,
+        "required_mwh": 40080.0,
+        "available_wind_mwh": 22684.673,
+        "raw_gap_mwh": 17395.327
+      }
+    ]
+  },
+  "kamp-repeats": {
+    "source": "KAMP/.../results/final_pipeline_eval_by_seed.csv",
+    "note": "정상 자료를 70:30으로 나눠 각 반복에서 정상 159개를 평가했습니다.\n표준편차는 분할·시드에 따른 변동이며 외부 일반화의 신뢰구간이 아닙니다.",
+    "rows": [
+      {
+        "seed": 0,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.628930817610063
+      },
+      {
+        "seed": 1,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 2,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 1.257861635220126
+      },
+      {
+        "seed": 3,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 4,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 5,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 1.257861635220126
+      },
+      {
+        "seed": 6,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 7,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 8,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 9,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 10,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 11,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 12,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 13,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 14,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 15,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.628930817610063
+      },
+      {
+        "seed": 16,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.628930817610063
+      },
+      {
+        "seed": 17,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 18,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      },
+      {
+        "seed": 19,
+        "normal_evaluation_n": 159,
+        "false_alarm_pct": 0.0
+      }
+    ]
+  },
+  "kamp-detection": {
+    "source": "KAMP/.../results/final_pipeline_eval_by_seed.csv; code/23_final_pipeline_p99_final.py",
+    "note": "길이 15샘플 미만의 보류 구간도 평가 분모에 남겼습니다.\n같은 이상 17개를 반복 사용했습니다. 반복 횟수는 독립 이상 표본 수를 늘리지 않습니다.",
+    "rows": [
+      {
+        "outcome": "alert",
+        "segments": 16,
+        "denominator": 17,
+        "pct": 94.11764705882354
+      },
+      {
+        "outcome": "held",
+        "segments": 1,
+        "denominator": 17,
+        "pct": 5.882352941176471
+      }
+    ]
+  },
+  "_sources": [
+    {
+      "path": "BEST1 notebook",
+      "sha256": "4b718caf6f524b91c5d397bf57ff40611a98a988b742f7a3d5ee4878245fe41f"
+    },
+    {
+      "path": "A_select2 notebook",
+      "sha256": "e0913060c9c85131c9d235df352d7258952694762b28b5eacff7c96220250e4c"
+    },
+    {
+      "path": "SMR notebook",
+      "sha256": "9ab029b9fac5d04ccd1fa4a73578927e3c524d7ac84818a5dd7b1277d0a2fe2c"
+    },
+    {
+      "path": "KAMP final pipeline evaluation by seed",
+      "sha256": "fc04c562ff0a809ba7f2e67613b133e8751c2d941ebc478172464ab43f921254"
+    }
+  ]
+}
