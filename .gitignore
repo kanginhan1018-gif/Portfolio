@@ -2,3 +2,12 @@ node_modules
 dist
 .astro
 .superpowers
+.vercel
+
+# local review and audit notes list the local folder structure: never publish
+docs/ACTIVITY-REVIEW-*.md
+docs/PORTFOLIO-AUDIT-*.md
+docs/PORTFOLIO-SLIDES-GUIDE.md
+docs/taken-down/
+src/data/activity-scope.md
+docs/publication-review/assets/build_charts.py
