@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import { url } from '../lib/url';
-import { Content as Scope } from '../data/activity-scope.md';
 const activities = (await getCollection('activities')).sort((a, b) => a.data.order - b.data.order);
 const categories = [...new Set(activities.map((activity) => activity.data.category))];
 ---
@@ -28,10 +27,6 @@ const categories = [...new Set(activities.map((activity) => activity.data.catego
       </ul>
     </section>
   ))}
-  <aside class="scope">
-    <h2>자료와 기록 범위</h2>
-    <Scope />
-  </aside>
 </Base>
 <style>
   .activity-intro { padding: 28px 0 32px; }
