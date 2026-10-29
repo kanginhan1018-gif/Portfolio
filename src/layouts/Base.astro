@@ -4,10 +4,10 @@ import '../styles/global.css';
 import { SITE } from '../site';
 import { url } from '../lib/url';
 // i18n: page offers the ko/en toggle; the inline script applies a stored choice before first paint.
-const { title, description = SITE.tagline, i18n = false } = Astro.props;
+const { title, description = SITE.tagline, i18n = false, lang = 'en' } = Astro.props;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang} id="top">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,6 +20,7 @@ const { title, description = SITE.tagline, i18n = false } = Astro.props;
       <div class="bar">
         <a class="brand" href={url('/')}>{SITE.name}</a>
         <nav>
+          <a href={url('/activities/')}>활동 기록</a>
           <a href={url('/projects/')}>Projects</a>
           <a href={url('/papers/')}>Papers</a>
           <a href={url('/about/')}>About</a>

@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+export async function getStaticPaths() {
+  return (await getCollection('activities')).map((activity) => ({ params: { id: activity.id }, props: { activity } }));
+}
+const { activity } = Astro.props;
+const { Content } = await render(activity);
+const { title, summary, category } = activity.data;
+---
+<Base title={title} description={summary} lang="ko">
+  <p class="back-link"><a href={url('/activities/')}>← 전체 활동</a></p>
+  <header class="activity-heading">
+    <p class="muted">{category}</p>
+    <h1>{title}</h1>
+    <p class="lead">{summary}</p>
+  </header>
+  <article class="activity-body" aria-label={title}>
+    <Content />
+  </article>
+  <footer class="activity-footer">
+    <p class="muted">2026년 10월 24일 작업 기록 기준</p>
+    <a href={url('/activities/')}>전체 활동으로 돌아가기 →</a>
+  </footer>
+</Base>
+<style>
+  .back-link { margin: 8px 0 36px; }
+  .activity-heading > .muted { font-size: 14px; }
+  .activity-heading h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.35; margin: 16px 0 24px; }
+  .activity-heading .lead { max-width: 38em; }
+  .activity-body { margin-top: 44px; }
+  .activity-body :global(p) { line-height: 1.95; margin: 24px 0; overflow-wrap: anywhere; }
+  .activity-body :global(details) { border-left: 2px solid var(--line); padding: 10px 0 10px 18px; margin-top: 40px; font-size: 14px; color: var(--muted); }
+  .activity-body :global(summary) { color: var(--fg); cursor: pointer; font-weight: 600; }
+  .activity-body :global(summary:focus-visible) { outline: 2px solid var(--accent); outline-offset: 5px; }
+  .activity-body :global(code) { box-shadow: none; padding: 0; overflow-wrap: anywhere; }
+  .activity-footer { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 24px; }
+</style>

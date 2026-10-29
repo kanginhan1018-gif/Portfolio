@@ -6,12 +6,13 @@ const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
+    lang: z.enum(['en', 'ko']).default('en'),
     domain: z.string(),
-    data_source: z.object({ name: z.string(), url: z.string().url(), license: z.string() }),
+    data_source: z.object({ name: z.string(), url: z.string().url().optional(), license: z.string() }),
     methods: z.array(z.string()).min(1),
     solver: z.string(),
     tags: z.array(z.string()),
-    repo: z.string().url(),
+    repo: z.string().url().optional(),
     date: z.coerce.date(),
     draft: z.boolean().default(false),
     charts: z.array(z.enum(['gap', 'time', 'tradeoff'])).default([]),
@@ -44,4 +45,14 @@ const papers = defineCollection({
   }),
 });
 
-export const collections = { projects, projectsKo, papers };
+const activities = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/activities' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    category: z.string(),
+    order: z.number().int().positive(),
+  }),
+});
+
+export const collections = { projects, projectsKo, papers, activities };

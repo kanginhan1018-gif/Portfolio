@@ -10,8 +10,13 @@ const latest = (await getProjects()).slice(0, 3);
     <h1>Operations research,<br />grounded in <em>real data.</em></h1>
     <p class="lead">
       Deep in mathematical optimization, broad across data analysis, machine learning and engineering.
-      Every project starts from a public dataset and ends with a model that makes a decision.
+      Case studies connect optimization, data validation and working prototypes, with assumptions and limits made explicit.
     </p>
+  </section>
+  <section class="activity-link" aria-labelledby="activity-title">
+    <h2 id="activity-title">활동과 프로젝트 전체 기록</h2>
+    <p>최적화·에너지, 제조·환경 분석, 교통 데이터, AI 제품과 자동화까지. 활동별 상세 페이지에서 배경과 구현, 실험 결과와 판단을 읽을 수 있습니다.</p>
+    <a href={url('/activities/')}>상세 활동 기록 읽기 →</a>
   </section>
   <h2 class="section-title">Deep in one thing.<br />Broad around it.</h2>
   <TShape />

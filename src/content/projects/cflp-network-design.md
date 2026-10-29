@@ -46,7 +46,7 @@ There are two layers of data.
 - keep summary level 162 only;
 - strip Census suffixes (" city", " town", " CDP", " (balance)", " metropolitan government") from names.
 
-The script `scripts/build_us_cities.py` regenerates the file, and its sha256 is pinned in `data/SOURCES.md`. (SimpleMaps was tried first, but its download sits behind a Cloudflare challenge.)
+The repository has the script that regenerates the file and a pinned checksum for it. (SimpleMaps was tried first, but its download sits behind a Cloudflare challenge.)
 
 A test problem (an "instance") of size $n_{\text{demand}} \times n_{\text{candidates}}$ uses the $n_{\text{demand}}$ biggest cities as customers. The $n_{\text{candidates}}$ biggest cities are the places where a DC could be built, so the two groups overlap. Each city gives these numbers to the model:
 
@@ -66,6 +66,10 @@ The data has no real capacities or building costs, so two numbers are my own ass
 - **Capacity rule (changed).** In an earlier version (not in the final results), each site could handle 1.5× its average share of demand. Total capacity was then only 1.5× total demand, so at least two thirds of all sites had to open just to cover everyone. Most open/close choices were forced, and the balance between building cost and shipping cost hardly showed. I changed it to **3× the average share**: $u_i = 3 \cdot \frac{\sum_j d_j}{n_{\text{candidates}}} \cdot w_i$, where $w_i \propto \sqrt{\text{pop}_i}$ means bigger cities get more capacity, rescaled so the average weight is 1. Total capacity is now 3× demand, but capacity still matters: on the 100 × 40 problem, any 8 sites are too few (section 6).
 - **Fixed-cost scale (assumption).** I chose 8000 so that the best plan on 100 × 40, with no forced number of sites, opens 18 of the 40 sites. That leaves room on both sides of the cost curve.
 - **Instance shape (changed).** I also tried problems with more candidate sites than customers, for example 60 demand × 200 candidates. There, nearly every customer gets its own site and all three formulations run out of time, so these problems can't tell the formulations apart. I dropped them and grew the grid with more customers than candidates instead.
+
+### Where I got stuck
+
+The capacity rule took longest. Every other number could be checked against a source or a size, but capacity decides how many sites *must* open, so it decides whether there is a decision to make at all. At 1.5× the problem was almost forced; at 3× it was open, but I had picked 3 once and never tried anything else. Section 6 tests that choice.
 
 ## 4. Prediction / forecasting
 
@@ -152,20 +156,31 @@ Away from the bottom, cost climbs fast: k = 12 is +5.9%, k = 9 is +27.1% and k =
 
 For a decision-maker, the model is more sure about a range of network sizes than about one exact number. Anything from 16 to 19 DCs is within 0.3% of the best plan. Inside that range, the choice can be made on things the model leaves out, such as lease terms, local labor, or room to grow, at almost no extra modeled cost. Outside it, cost rises quickly: k = 14 is +1.96% and k = 22 is +2.27%.
 
+### Robustness to the parameters I assumed
+
+I re-solved with other values: 21 capacity settings (factor 1.2× to 10×, with capacity spread evenly, by the square root of population, or in proportion to population) on 100 × 40, eight settings on 200 × 60, and 21 fixed-cost-scale and shipping-rate pairs. Every run reached the 0.01% tolerance, and the slowest 100 × 40 run took 6.3 s.
+
+- **Capacity changes the network, not the ranking of the bounds.** The number of open DCs falls from 35 (1.2×, even split) to 18–19 once capacity is 4× or more, where capacity stops binding and cost balance decides. My 3× choice (18 open, 65% utilization) sits at the edge of that range, not inside the forced region. On 200 × 60 the root bound was A < B < C in all eight settings and C was fastest in all eight. On 100 × 40 C was not always fastest (square-root split at 1.5×: C 6.4 s, A 4.5 s).
+- **Only the ratio of fixed cost to shipping rate matters.** 8000 with rate 0.05 and 16000 with rate 0.1 both open 18; 4000/0.05 and 8000/0.1 both open 22. Scaling both together changes nothing.
+- **Realistic cost shares break the model.** National figures put storage at about 11% of storage plus transport (CSCMP, 2023 data: $188.1B vs $1,496.5B). In my model, fixed cost is 52% of the optimum at the default and 11–73% across the grid. It reaches about 11% only at fixed-cost scale 500 with rate 0.1, and there all 40 sites open (utilization 33%): the location decision disappears. So the default is deliberately storage-heavy to keep a decision to study, and the numbers should not be read as a calibrated US network.
+
+Other unit costs I looked up (trucking about $2.27 per mile, a road-detour factor of 1.22, industrial rent about $10 per sq ft per year) fit into the shipping rate and the fixed cost only through assumptions I could not source, such as payload and throughput per site, so I did not tune the model to them.
+
+### What I learned
+
+- A parameter I chose once and never varied was the weakest part of the study; solving it again at other values took minutes.
+- The result I can defend is the pattern (tighter formulations give higher root bounds, and C is the fastest in most settings), not the exact network.
+- A realistic cost ratio can make a design problem trivial, so "more realistic" and "more useful to study" can pull apart.
+
 ## 7. Limitations
 
 - **Split sourcing is allowed.** A city's demand can be split across several DCs. Having just one DC per city ($x_{ij} \in \{0,1\}$) is more realistic but much harder to solve, and I did not try it.
 - **One period, deterministic demand.** There is no growth, no seasons, no uncertain demand, and no plan for opening DCs over several years.
-- **Assumed parameters.** Capacity (3× the average share) and the fixed-cost scale (8000) are my own choices, not real data, and the shipping rate is not matched to real freight prices. Where the cheapest point falls depends on these choices. The *pattern* in how the three formulations compare should not.
+- **Assumed parameters.** Capacity (3× the average share) and the fixed-cost scale (8000) are my own choices, not real data, and the shipping rate is not matched to real freight prices. Where the cheapest point falls depends on these choices. Section 6 re-solves with other values: the bound ordering held in every setting I tried, but the best formulation's lead varied.
 - **Default solver settings.** The only changes were 1 thread and seed 0. I did no tuning and gave the solver no hints or head start. The gap between B and C at the largest size might change with different solver settings.
 - **One instance family.** All problems are cut from one US city list, each the top of the same list, with one random seed for building costs. OR-Library is used only to check correctness.
 - **Single-run timings.** Each time is one run on one machine with HiGHS 1.15.1, 1 thread, seed 0, `mip_rel_gap` 1e-4 and a rough 120 s limit, recorded on 2026-10-21. I did not repeat runs, so treat small time differences as noise.
 
 ## 8. Reproduce
 
-The repository is linked in the table above. Python 3.11+, with dependencies pinned in `pyproject.toml` (`highspy==1.15.1`, `numpy`, `pandas`):
-
-    python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-    .venv/bin/python -m cflp.run     # writes results/{orlib,tradeoff,scaling}.json
-
-A full run took 794 s on the machine used here. The charts on this page are drawn from copies of `scaling.json` and `tradeoff.json` made by that run.
+The repository is linked in the table above. It needs Python 3.11+ and a pinned HiGHS 1.15.1; the README there has the commands. A full run took 794 s on the machine used here, and the sensitivity runs about 7 minutes.

@@ -1,0 +1,2 @@
+scenario_capacity_mw,residual_load_mw,days,required_mwh,available_wind_mwh,raw_gap_mwh
+80,5,334,40080.0,22684.673,17395.327

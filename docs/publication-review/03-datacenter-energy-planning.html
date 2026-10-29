@@ -1,0 +1,142 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>데이터센터 입지·송전 경로와 에너지 공급 · 검토용</title><style>:root{color-scheme:light dark;--bg:#fff;--fg:#17202a;--muted:#526172;--line:#dfe5eb;--link:#165bb8;--soft:#f3f6fa}@media(prefers-color-scheme:dark){:root{--bg:#1c2128;--fg:#eef2f6;--muted:#b0bdca;--line:#3a4552;--link:#8bbcff;--soft:#252e39}}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.85 -apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif}main{max-width:900px;margin:auto;padding:28px 24px 100px}a{color:var(--link);text-underline-offset:4px}nav{display:flex;gap:12px 22px;flex-wrap:wrap;font-size:14px;padding:15px 0;border-bottom:1px solid var(--line)}h1{font-size:clamp(29px,5vw,43px);line-height:1.35;letter-spacing:-.035em;margin:42px 0 26px}h2{font-size:26px;line-height:1.4;margin:58px 0 18px;letter-spacing:-.025em}p{margin:20px 0}blockquote{border-left:3px solid var(--line);padding:4px 18px;margin:24px 0;color:var(--muted);font-size:14px}table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.65;margin:28px auto}td,th{border-bottom:1px solid var(--line);padding:13px 12px;vertical-align:top;text-align:left}th{background:var(--soft);width:auto;white-space:normal}.table-scroll{width:100%;max-width:100%;overflow-x:auto}details{border:1px solid var(--line);padding:16px 20px;margin:40px 0;font-size:14px;overflow-wrap:anywhere}summary{cursor:pointer;font-weight:650}code{font:14px/1.7 ui-monospace,monospace;overflow-wrap:anywhere}li{margin:8px 0}.review-status{color:var(--muted);font-size:14px}.review-item{border-bottom:1px solid var(--line);padding:16px 0 24px}.review-item h2{margin:15px 0 10px;font-size:24px}.review-item p{color:var(--muted);margin:10px 0}.sources-link{font-size:14px}@media(max-width:600px){main{padding:16px 18px 70px}body{font-size:16px}td,th{padding:10px 8px;min-width:120px}h2{font-size:23px}}
+.evidence-figure{margin:36px 0}.chart-scroll{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:8px}.chart-scroll>a{display:block}.chart-scroll img{display:block;width:100%;min-width:640px;height:auto}.evidence-figure figcaption{font-size:14px;color:var(--muted);line-height:1.75;margin-top:12px}.process-figure{margin:32px 0 44px;padding:24px 0;border-block:1px solid var(--line)}.process-figure>figcaption{font-size:18px;font-weight:700;margin-bottom:22px}.process-figure ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}.process-figure li{margin:0;min-width:0}.step-number{display:block;font-size:24px;line-height:1.2;font-weight:750;color:var(--link);margin-bottom:12px}.process-figure strong{display:block;font-size:16px;line-height:1.5;margin-bottom:7px}.process-figure li div>span{display:block;font-size:14px;line-height:1.7;color:var(--muted)}.figure-note{font-size:13px;line-height:1.7;color:var(--muted);margin-bottom:0}@media(max-width:760px){.process-figure ol{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.process-figure ol{grid-template-columns:1fr;gap:20px}.process-figure li{display:flex;gap:20px}.step-number{flex:0 0 34px;margin:0}.chart-scroll:before{content:'그래프를 좌우로 이동하거나 눌러 확대할 수 있습니다';display:block;color:#526172;font-size:12px;padding:12px}}
+</style></head><body><main><nav aria-label="검토 페이지"><a href="index.html">전체 검토안</a><a href="03-datacenter-energy-planning.md">본문 원본</a></nav><h1 id="데이터센터-입지송전-경로와-에너지-공급-시나리오">데이터센터 입지·송전 경로와 에너지 공급 시나리오</h1>
+<blockquote>
+<p>게시 검토용 본문 초안. 사이트 반영·배포 전 검토본입니다.</p>
+</blockquote>
+<p><strong>경주 지역에서 데이터센터 부지와 송전 경로를 함께 탐색하고, 풍력의 변동을 ESS·SMR로 보완하는 시나리오를 분석했습니다.</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-scroll"><table><thead><tr><th>항목</th><th>내용</th></tr></thead><tbody><tr><td>분야</td><td>공간 데이터 분석·입지 및 경로 탐색·에너지 시뮬레이션</td></tr><tr><td>담당</td><td>후보지 생성, 공간·용량 제약, 경로 탐색, ESS 계산, 공급·비용 시나리오 비교</td></tr><tr><td>도구</td><td>Python, pandas, NumPy, 격자 분석, Dijkstra, A*, 시뮬레이션</td></tr><tr><td>주요 산출물</td><td>후보지·경로 지도, 용량 조합별 비교, 일별·월별 ESS 결과, 장기 공급·비용 표</td></tr></tbody></table></div>
+<figure class="process-figure">
+<figcaption>연결해서 검토한 의사결정</figcaption>
+<ol><li><span class="step-number">01</span><div><strong>입지 후보</strong><span>부지·경사·문화재·면적</span></div></li><li><span class="step-number">02</span><div><strong>전력 연결</strong><span>변전소 용량·거리·격자 경로</span></div></li><li><span class="step-number">03</span><div><strong>공급 시나리오</strong><span>10분 풍력·잔여부하·ESS·SMR</span></div></li><li><span class="step-number">04</span><div><strong>운영·비용 조건</strong><span>일별·연속 SOC와 에너지 수지</span></div></li></ol>
+<p class="figure-note">분석 범위를 요약한 개념도입니다. 전체 후보를 동시에 푸는 단일 최적화 모형을 뜻하지 않습니다.</p>
+</figure>
+<h2 id="한-위치를-고르는-데-필요한-조건">한 위치를 고르는 데 필요한 조건</h2>
+<p>데이터센터 입지에는 넓고 평탄한 부지만 있으면 되는 것이 아닙니다. 전력을 공급할 변전소까지 연결할 수 있어야 하고, 그 경로의 길이와 주변 영향, 시설 용량을 함께 고려해야 합니다. 전력 공급에서는 평균 풍력 발전량이 충분해 보여도 부족한 시간대를 버틸 수 있는지가 별도 문제입니다.</p>
+<p>이 프로젝트에서는 부지·송전·에너지 공급을 연결했습니다. 먼저 공간과 전력 제약을 만족하는 부지 조합을 만들고, 연결 경로와 영향 지표를 비교했습니다. 그다음 풍력의 10분별 변동을 이용해 부족 전력과 ESS, SMR 공급 시나리오를 검토했습니다.</p>
+<h2 id="내가-한-일">내가 한 일</h2>
+<p>경주 경계와 격자별 경사·문화재 위험·인구, 변전소 위치와 용량을 이용해 후보지를 생성했습니다. 30MW·50MW 데이터센터의 조합을 만들고 부지 중복, 변전소 이격, 경로 길이와 모델상 영향인구를 검사했습니다.</p>
+<p>경로 계산에는 Dijkstra·A*를 적용한 버전이 있고, 후보지 점수만 비교하는 접근에서 부지 경계와 변전소를 실제 격자로 연결하는 방식까지 확장했습니다. 에너지 분석에서는 발전량 단위 변환과 충방전 상태 추적, 필요한 ESS 용량 탐색, 일별·장기 공급과 비용 비교를 구현했습니다.</p>
+<h2 id="부지와-송전-경로를-함께-비교했다">부지와 송전 경로를 함께 비교했다</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-scroll"><table><thead><tr><th>판단 항목</th><th>분석에 반영한 조건</th></tr></thead><tbody><tr><td>부지</td><td>지역 경계 내부, 문화재 위험 제외, 경사와 필요한 면적</td></tr><tr><td>시설 조합</td><td>30MW·50MW 조합, 부지 중복 방지</td></tr><tr><td>전력 연결</td><td>변전소 용량, 이격거리, 경로 연결 가능성</td></tr><tr><td>경로</td><td>격자상 거리, 송전 경로가 통과하는 인구 지표</td></tr><tr><td>선택 기준</td><td>공사·송전·주민 영향 등 가중치별 비교</td></tr></tbody></table></div>
+<p>직선 거리는 후보지를 빠르게 비교하는 데 유용하지만, 경로가 어떤 격자를 통과하는지 설명하지 못합니다. 부지의 인구만 작게 만드는 것과 송전 경로까지 포함한 영향을 줄이는 것도 다른 문제입니다. 두 범위를 나눠 계산하고 기준을 바꿨을 때 선택이 어떻게 달라지는지 비교했습니다.</p>
+<p>다음은 한 노트북의 동일 실행 셀에 저장된 용량별 탐색 결과입니다.</p>
+<figure class="evidence-figure">
+<div class="chart-scroll"><a href="assets/site-scenarios.svg" aria-label="80·100·110·130·160MW의 모델상 영향인구와 송전 거리. 두 지표는 서로 다른 단위의 독립 축으로 표시. 원본 확대"><img src="assets/site-scenarios.svg" alt="80·100·110·130·160MW의 모델상 영향인구와 송전 거리. 두 지표는 서로 다른 단위의 독립 축으로 표시." loading="lazy"></a></div>
+<figcaption>각 용량 요구에서 선택한 후보를 비교합니다. 실제 주민 실측이나 동일 용량의 절감 효과가 아닙니다. <a href="assets/site-scenarios.svg">원본 확대</a> · <a href="assets/site-scenarios.csv">표시 데이터 CSV</a></figcaption>
+</figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-scroll"><table><thead><tr><th>데이터센터 조합</th><th align="right">총용량</th><th align="right">모델상 총 영향인구 지표</th><th align="right">총 송전 거리</th></tr></thead><tbody><tr><td>30MW 1개 + 50MW 1개</td><td align="right">80MW</td><td align="right">133.64명 환산</td><td align="right">7.06km</td></tr><tr><td>50MW 2개</td><td align="right">100MW</td><td align="right">144.72명 환산</td><td align="right">6.72km</td></tr><tr><td>30MW 2개 + 50MW 1개</td><td align="right">110MW</td><td align="right">217.11명 환산</td><td align="right">10.92km</td></tr><tr><td>30MW 1개 + 50MW 2개</td><td align="right">130MW</td><td align="right">239.69명 환산</td><td align="right">17.18km</td></tr><tr><td>30MW 2개 + 50MW 2개</td><td align="right">160MW</td><td align="right">323.46명 환산</td><td align="right">16.13km</td></tr></tbody></table></div>
+<p>인구는 격자와 보정 계수로 계산한 모형상 지표이며 실제 영향을 받는 주민을 실측한 인원수가 아닙니다. 표는 각기 다른 용량 요구를 충족한 후보 비교로, 동일한 서비스 수준에서의 절감률을 나타내지 않습니다. 후보 생성·제약·목적함수에 따라 선택이 달라져 다른 버전의 최솟값을 한 결과로 합치지 않았습니다.</p>
+<h2 id="발전량을-ess의-시간별-잔량으로-연결했다">발전량을 ESS의 시간별 잔량으로 연결했다</h2>
+<p>10분 구간의 발전량을 평균 전력으로 변환한 뒤, 공급과 잔여부하의 차이를 다시 구간 에너지로 바꿔 ESS 잔량을 갱신했습니다. 여유 전력은 용량 한도까지 충전하고 부족분은 방전 효율을 반영해 차감했습니다. 비교 버전에서는 초기 충전 상태와 효율, 풍력 배분과 잔여부하 조건을 바꿨습니다.</p>
+<p>필요한 저장 용량은 주어진 발전 프로파일을 끝까지 공급할 수 있는지 확인하면서 탐색했습니다. 평균 필요 용량뿐 아니라 95백분위·최악일, 일별 공급 성공과 장기 연속 운전을 비교했습니다. 95백분위라는 기준을 실제 공급 신뢰도 보증으로 해석하지는 않았습니다.</p>
+<h2 id="하루-단위-평가와-장기-연속-공급은-달랐다">하루 단위 평가와 장기 연속 공급은 달랐다</h2>
+<figure class="evidence-figure">
+<div class="chart-scroll"><a href="assets/energy-balance.svg" aria-label="334일, 잔여부하 5MW의 에너지 요구 40,080MWh와 가용 풍력 22,684.673MWh, 차이 17,395.327MWh. 원본 확대"><img src="assets/energy-balance.svg" alt="334일, 잔여부하 5MW의 에너지 요구 40,080MWh와 가용 풍력 22,684.673MWh, 차이 17,395.327MWh." loading="lazy"></a></div>
+<figcaption>80MW 센터 조합의 별도 잔여부하 5MW 조건입니다. 배터리 손실과 시간별 충족 여부를 반영하기 전 총량을 비교했습니다. <a href="assets/energy-balance.svg">원본 확대</a> · <a href="assets/energy-balance.csv">표시 데이터 CSV</a></figcaption>
+</figure>
+<p>중요한 확인은 ESS 잔량을 날짜마다 초기화하는 실험과 기간 전체에서 이어가는 실험의 차이였습니다. 하루를 버티는 용량이 나와도, 그다음 날의 초기 전력을 어디에서 충전할지는 별도로 설명해야 합니다.</p>
+<p>장기 비교 셀의 80MW 센터 조합에는 잔여부하를 5MW로 둔 설정이 있습니다. 이 설정의 334일 자료에서 잔여부하가 요구하는 에너지는 40,080MWh, 배분된 사용 가능 풍력은 약 22,684.7MWh로 기록됐습니다. 약 17,395.3MWh의 차이는 저장 중 손실을 반영하기 전의 원시 에너지 부족분입니다. 5MW는 데이터센터 전체 80MW와 별도로 설정한 보완 대상 부하입니다.</p>
+<p>이 조건에서는 ESS 용량만 늘려 부족한 에너지가 생겨나지는 않습니다. 매우 큰 초기 저장 에너지를 허용하면 유한 기간을 버티는 해를 계산할 수 있지만, 반복 운전 가능한 공급 체계와는 다릅니다. 따라서 초기 SOC·외부 충전·전체 에너지 수지를 함께 확인하고, 추가 공급을 포함하는 시나리오로 분석 범위를 넓혔습니다.</p>
+<h2 id="smress-비용-비교의-조건">SMR·ESS 비용 비교의 조건</h2>
+<p>SMR 공급량과 ESS 설치·유지비를 바꾸며 10년 할인 비용을 계산했습니다. 한 계산 버전은 할인율 5%, ESS 설치비 2억원/MWh, 연 유지비 1.5%, SMR PPA 130원/kWh를 가정합니다. 이 값은 모델의 입력 가정이며 현재 시장가격이나 실제 계약 조건으로 제시하지 않습니다.</p>
+<p>평균 필요 ESS를 고르는 경우와 95백분위 용량을 고르는 경우에는 비용 순위가 달라졌습니다. 다만 일별로 초기화한 ESS 용량에 기반한 비용표를 그대로 장기 안정 공급의 최저 비용 해로 사용할 수는 없습니다. 공급 조건이 충족되는지와, 그 조건 아래 비용을 비교하는지를 함께 보아야 합니다.</p>
+<h2 id="이-활동에서-얻은-것">이 활동에서 얻은 것</h2>
+<p>부지·경로·에너지·경제성을 따로 계산해 좋은 숫자만 합치면, 실제로 동시에 성립하지 않는 계획이 될 수 있습니다. 후보 탐색의 공간 범위, 변전소 용량, 전력과 에너지 단위, 배터리의 시작·종료 상태를 연결해 판단하는 것이 이 분석의 핵심이었습니다.</p>
+<p>현재 결과는 정해진 후보와 격자·비용·효율 가정에서의 비교입니다. 실제 인허가·계통 접속·주민 수용성이나 사업 경제성을 검증한 성과는 아니며, 후보 축소와 가중치별 선택을 전역 최적성 증명으로 표현하지 않습니다.</p>
+</main></body></html>

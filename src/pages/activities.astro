@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+import { Content as Scope } from '../data/activity-scope.md';
+const activities = (await getCollection('activities')).sort((a, b) => a.data.order - b.data.order);
+const categories = [...new Set(activities.map((activity) => activity.data.category))];
+---
+<Base title="활동과 프로젝트" description="강인한의 최적화·에너지·데이터 분석·AI 제품·자동화 활동별 상세 기록입니다." lang="ko">
+  <header class="activity-intro">
+    <p class="muted">강인한의 활동 기록 · 2026년 10월</p>
+    <h1>활동과 프로젝트</h1>
+    <p class="lead">각 활동의 배경과 구현, 실험에서 바뀐 판단과 결과를 상세 페이지에 정리했습니다.</p>
+  </header>
+  <nav class="category-index" aria-label="활동 분야">
+    <ul>{categories.map((category, i) => <li><a href={`#category-${i}`}>{category}</a></li>)}</ul>
+  </nav>
+  {categories.map((category, i) => (
+    <section class="activity-group" aria-labelledby={`category-${i}`}>
+      <h2 id={`category-${i}`}>{category}</h2>
+      <ul class="activity-list">
+        {activities.filter((activity) => activity.data.category === category).map((activity) => (
+          <li>
+            <h3><a href={url(`/activities/${activity.id}/`)}>{activity.data.title}</a></h3>
+            <p>{activity.data.summary}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+  <aside class="scope">
+    <h2>자료와 기록 범위</h2>
+    <Scope />
+  </aside>
+</Base>
+<style>
+  .activity-intro { padding: 28px 0 32px; }
+  .activity-intro h1 { margin-top: 12px; }
+  .category-index { border-block: 1px solid var(--line); padding: 16px 0; }
+  .category-index ul { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 0; margin: 0; list-style: none; font-size: 14px; }
+  .activity-group { margin: 64px 0; }
+  .activity-group h2 { font-size: 27px; line-height: 1.4; scroll-margin-top: 120px; }
+  .activity-list { padding: 0; list-style: none; }
+  .activity-list li { padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .activity-list h3 { margin: 0 0 10px; font-size: 22px; line-height: 1.45; }
+  .activity-list a { text-decoration-thickness: 1px; text-underline-offset: 5px; }
+  .activity-list p { color: var(--muted); margin: 0; line-height: 1.75; }
+  .scope { border-top: 1px solid var(--line); margin-top: 64px; padding-top: 24px; font-size: 14px; color: var(--muted); }
+  .scope h2 { font-size: 22px; color: var(--fg); }
+  .scope :global(p) { line-height: 1.85; overflow-wrap: anywhere; }
+</style>

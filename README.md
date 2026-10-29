@@ -27,3 +27,8 @@ AI 추천 서비스, ML/DL 기반 빅데이터 분석, 헬스케어 예측 모�
 
 ### 4. [Service / IP] 2024 지식재산 썸머캠프 (DRT 교통 호출 시스템)
 - **핵심 역할:** 정류장 피지컬 UI - 기사 단말 - 모바일 연동 통합 서비스 기획 및 특허 명세화
+
+## 사례와 활동 페이지
+
+프로젝트 사례(배송 경로 VRP, 녹조 예측, KAMP 이상탐지, CFLP)는 `src/content/projects`, 한국어판은 `src/content/projects-ko`에 있습니다.
+`/activities/`는 분야별 목록이고 활동 28개는 `/activities/<id>/`의 독립 페이지입니다. 로컬 확인은 `npm run dev`, 빌드·회귀 검사는 `npm test`입니다.

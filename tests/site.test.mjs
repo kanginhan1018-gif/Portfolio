@@ -92,3 +92,38 @@ test('pages without a translation get no toggle or pre-paint script', () => {
     assert.doesNotMatch(html, /data-set-lang|getItem\('lang'\)/, p);
   }
 });
+
+test('new case studies render without invented source or repository links', () => {
+  const slugs = ['kamp-anomaly-detection', 'algae-forecast-validation'];
+  const list = page('projects/index.html');
+  for (const slug of slugs) {
+    const html = page(`projects/${slug}/index.html`);
+    assert.ok(list.includes(`/projects/${slug}/`), slug);
+    assert.match(html, /한계/);
+    assert.doesNotMatch(html, /href="undefined"|href=""|<th>Code<\/th>/);
+  }
+  assert.match(page('projects/kamp-anomaly-detection/index.html'), /16\/17/);
+  assert.match(page('projects/algae-forecast-validation/index.html'), /음수/);
+});
+
+test('activities have independent detail pages and a summary-only index', () => {
+  const index = page('activities/index.html');
+  assert.match(index, /<html lang="ko"/);
+  assert.ok(page('index.html').includes('href="/activities/"'));
+  const files = readdirSync(new URL('../src/content/activities/', import.meta.url)).filter((file) => file.endsWith('.md'));
+  assert.equal(files.length, 28);
+  assert.doesNotMatch(index, /class="activity-body"/);
+  for (const file of files) {
+    const id = file.slice(0, -3);
+    assert.ok(index.includes(`href="/activities/${id}/"`), id);
+    const html = page(`activities/${id}/index.html`);
+    assert.match(html, /<html lang="ko"/);
+    assert.match(html, /class="activity-body"/);
+    assert.doesNotMatch(html, /근거와 산출물|<details/); // no file lists: they would expose the local folder structure
+    assert.ok(html.includes('href="/activities/"'), id);
+    assert.doesNotMatch(html, /<del>|\*\*|ntn_[A-Za-z0-9]|secret_[A-Za-z0-9]|[0-9]{8,10}:[A-Za-z0-9_-]{30}/);
+  }
+  const oibc = page('activities/oibc-solar-portfolio/index.html');
+  assert.match(oibc, /4,392,566행/);
+  assert.doesNotMatch(oibc, /풍력 발전 예측과 기상 피처 설계/);
+});

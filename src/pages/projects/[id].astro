@@ -30,10 +30,10 @@ const L = (en: string, k: string) => ({ en, ko: ko ? k : undefined });
   <table class="meta">
     <tbody>
       <tr><th><T {...L('Domain', '분야')} /></th><td><T en={d.domain} ko={ko?.domain} /></td></tr>
-      <tr><th><T {...L('Data', '데이터')} /></th><td><a href={d.data_source.url}>{d.data_source.name}</a> ({d.data_source.license})</td></tr>
+      <tr><th><T {...L('Data', '데이터')} /></th><td>{d.data_source.url ? <a href={d.data_source.url}>{d.data_source.name}</a> : d.data_source.name} ({d.data_source.license})</td></tr>
       <tr><th><T {...L('Methods', '방법')} /></th><td><T en={d.methods.join(', ')} ko={ko?.methods.join(', ')} /></td></tr>
       <tr><th><T {...L('Solver', '솔버')} /></th><td>{d.solver}</td></tr>
-      <tr><th><T {...L('Code', '코드')} /></th><td><a href={d.repo}>{d.repo}</a></td></tr>
+      {d.repo && <tr><th><T {...L('Code', '코드')} /></th><td><a href={d.repo}>{d.repo}</a></td></tr>}
       <tr><th><T {...L('Date', '날짜')} /></th><td>{d.date.toISOString().slice(0, 10)}</td></tr>
     </tbody>
   </table>
@@ -43,7 +43,7 @@ const L = (en: string, k: string) => ({ en, ko: ko ? k : undefined });
       <article lang="ko" data-l="ko"><KoContent /></article>
     </>
   ) : (
-    <article><Content /></article>
+    <article lang={d.lang}><Content /></article>
   )}
   {d.charts.map((kind) => <Chart kind={kind} />)}
 </Base>

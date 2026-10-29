@@ -57,6 +57,12 @@ button.chip[aria-pressed='true'] { color: var(--link); box-shadow: var(--pressed
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
 pre { overflow-x: auto; padding: 16px 18px; border-radius: 16px; background: var(--surface); box-shadow: var(--raised-sm); }
 :not(pre) > code { padding: 1px 6px; border-radius: 6px; box-shadow: var(--pressed-sm); font-size: .9em; }
+/* Body tables fill the reading column; metadata keeps its label width. */
+article table { width: 100%; margin: 24px auto; border-collapse: collapse; }
+article table th, article table td { padding: 12px 14px; overflow-wrap: anywhere; }
+article table th { width: auto; white-space: normal; }
+/* Figures scale to the reading column; Astro writes the intrinsic width/height attributes on the img. */
+article img { display: block; max-width: 100%; height: auto; margin: 24px auto; border-radius: 12px; }
 table.meta { width: 100%; margin: 8px 0 40px; padding: 4px 22px; border-radius: 20px; box-shadow: var(--raised); border-collapse: separate; border-spacing: 0; }
 table.meta tr:last-child > * { border-bottom: 0; }
 td, th { text-align: left; padding: 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
@@ -77,3 +83,15 @@ html:not([data-js]) .lang-toggle { display: none; }
 /* visual state follows html[data-lang] (set before paint), aria-pressed follows via JS */
 html:not([data-lang='ko']) .lang-toggle [data-set-lang='en'], html[data-lang='ko'] .lang-toggle [data-set-lang='ko'] { color: var(--link); box-shadow: var(--pressed); }
 .lang-toggle button:focus-visible, button.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Keep the expanded navigation inside narrow screens. */
+@media (max-width: 600px) {
+  .site-header .bar { min-height: 56px; height: auto; flex-wrap: wrap; gap: 6px 12px; padding-top: 8px; padding-bottom: 8px; }
+  .site-header nav { flex-wrap: wrap; justify-content: flex-end; flex: 1 1 auto; gap: 2px; }
+  .site-header nav a { font-size: 13px; padding: 6px 8px; }
+  /* Body tables scroll sideways instead of breaking Korean words letter by letter. */
+  article table { display: block; overflow-x: auto; }
+  article table th, article table td { word-break: keep-all; overflow-wrap: break-word; }
+}
+.activity-link { margin-top: 48px; }
+.activity-link h2 { font-size: 26px; line-height: 1.4; }

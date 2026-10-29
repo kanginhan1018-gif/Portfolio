@@ -187,6 +187,29 @@ $$\min\{\eta_i^-,\eta_i^+\}<\eta_{rel}$$
 
 저자들은 마지막으로 full strong branching과의 노드 수 격차가 남아 있고, 노드당 시간을 크게 늘리지 않고 이 격차를 줄일 수 있느냐가 남은 질문이라고 씁니다.
 
+### $\eta_{rel}=4\sim8$ 은 증명된 값인가
+
+아닙니다. 위 결과는 인스턴스 집합에서 측정한 경험적 최적점이고, "관측이 몇 번이면 pseudocost가 믿을 만해진다"를 보인 이론은 제가 찾은 범위에서는 없었습니다. 대신 이 고정 횟수 기준 자체를 문제 삼은 후속 연구가 있습니다.
+
+Hendel (2015)은 고정 횟수 문턱값의 약점을 두 가지로 지적합니다. 구조가 다른 변수들에 같은 횟수를 요구한다는 점, 문제 크기가 커질 때 같은 값이 잘 맞는지 알 수 없다는 점입니다. 대안으로 변수별 pseudocost 관측값의 표본 분산을 써서 두 가지 기준을 제안합니다.
+
+- **상대오차 기준(rer):** pseudocost 신뢰구간의 상대오차가 기준 이하가 되면 믿을 만하다고 봅니다.
+- **가설검정 기준(hyp):** 현재 최고 후보를 이길 가능성이 낮은 후보를 Student t-검정으로 걸러냅니다.
+
+SCIP 3.1.0.2에서 MIPLIB 3.0/2003/2010의 135개 인스턴스(제한시간 2시간)로 고정 문턱값 5와 비교한 결과입니다.
+
+| 설정 | 노드 수(기하평균, 기준=100%) | 시간 |
+|---|---|---|
+| 고정 5 (기준) | 100% | 기준 |
+| rer-0.01 | 80.5% | 기준보다 6.1% 느림 |
+| hyp | 82.4% | 거의 같음(+1.5%) |
+
+(98개 인스턴스를 모든 설정이 푼 경우의 값입니다.) 노드 수는 줄었지만 시간은 줄지 않았습니다. 새 기준이 strong branching을 더 많이 쓰기 때문이라고 논문이 설명합니다. 그래서 "고정 횟수 대신 통계 기준이 낫다"고 단정할 결과는 아닙니다. 논문 스스로도 첫 구현일 뿐이고, 고정 문턱값을 strong branching 비용에 따라 동적으로 조정하면 성능이 좋아진다고 덧붙입니다.
+
+이 논문에서 확인한 점이 하나 더 있습니다. 2005년 논문의 8은 SCIP 3.1 시점에 5로 바뀌어 있었습니다. 위 기본값 표의 `maxreliable=5.0`과 같은 값이고, 동적 조정 폭이 `minreliable`과 `maxreliable`로 나뉘어 있으리라 짐작하지만 소스에서 확인하지는 않았습니다.
+
+Le Bodic과 Nemhauser의 추상 모델은 위에서 다룬 점수 함수(곱 대 몫)의 이론이고, 신뢰도 문턱값은 다루지 않습니다.
+
 ### 지금의 SCIP는 어떻게 설정돼 있나
 
 PySCIPOpt 6.3.0(SCIP 10.0)에서 읽은 기본값입니다.
@@ -215,6 +238,7 @@ PySCIPOpt 6.3.0(SCIP 10.0)에서 읽은 기본값입니다.
 
 - 2005년 논문은 한 솔버(SIP)와 당시 하드웨어(833 MHz)에서의 결과입니다. 지금의 솔버와 기본값은 다릅니다.
 - ratio, svts의 수치는 Anderson 외가 SCIP 6.0에서 낸 것이고, 이 글에서 재현하지 않았습니다.
+- $\eta_{rel}$ 의 최적 구간(4~8)은 경험적 결과이고, 이를 증명한 연구는 찾지 못했습니다. Achterberg의 박사학위 논문(2007)은 열어 보지 못했습니다. Hendel (2015)은 PDF 본문에서 확인했습니다.
 - 곱이 가중합보다 10% 넘게 낫다는 주장은 박사학위 논문을 직접 읽지 못하고 인용으로만 확인했습니다.
 
 이전 글: [Presolve](../milp-presolve/) · 다음 글: [Conflict analysis](../milp-conflict-analysis/) · 전체 개요: [MILP 솔버는 왜 빨라지는가](../milp-acceleration/)
@@ -223,4 +247,5 @@ PySCIPOpt 6.3.0(SCIP 10.0)에서 읽은 기본값입니다.
 
 - Achterberg, T., Koch, T., Martin, A. (2005). [Branching rules revisited](https://doi.org/10.1016/j.orl.2004.04.002). *Oper. Res. Lett.* 33, 42–54.
 - Anderson, D., Le Bodic, P., Morgan, K. (2020). [Further Results on an Abstract Model for Branching and its Application to Mixed-Integer Programming](https://arxiv.org/abs/1909.01472). arXiv:1909.01472.
+- Hendel, G. (2015). [Enhancing MIP Branching Decisions by Using the Sample Variance of Pseudo Costs](https://opus4.kobv.de/opus4-zib/frontdoor/index/index/docId/5459). *CPAIOR 2015*, LNCS 9075, 199–214 (ZIB Report 15-28).
 - SCIP 소스 코드 `src/scip/branch.c` (`SCIPbranchGetScore`)와 [SCIP 파라미터 목록](https://www.scipopt.org/doc/html/PARAMETERS.php).
