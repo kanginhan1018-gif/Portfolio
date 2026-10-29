@@ -111,7 +111,7 @@ test('activities have independent detail pages and a summary-only index', () => 
   assert.match(index, /<html lang="ko"/);
   assert.ok(page('index.html').includes('href="/activities/"'));
   const files = readdirSync(new URL('../src/content/activities/', import.meta.url)).filter((file) => file.endsWith('.md'));
-  assert.equal(files.length, 28);
+  assert.equal(files.length, 16);
   assert.doesNotMatch(index, /class="activity-body"/);
   for (const file of files) {
     const id = file.slice(0, -3);

@@ -31,4 +31,4 @@ AI 추천 서비스, ML/DL 기반 빅데이터 분석, 헬스케어 예측 모�
 ## 사례와 활동 페이지
 
 프로젝트 사례(배송 경로 VRP, 녹조 예측, KAMP 이상탐지, CFLP)는 `src/content/projects`, 한국어판은 `src/content/projects-ko`에 있습니다.
-`/activities/`는 분야별 목록이고 활동 28개는 `/activities/<id>/`의 독립 페이지입니다. 로컬 확인은 `npm run dev`, 빌드·회귀 검사는 `npm test`입니다.
+`/activities/`는 분야별 목록이고 활동 16개는 `/activities/<id>/`의 독립 페이지입니다. 로컬 확인은 `npm run dev`, 빌드·회귀 검사는 `npm test`입니다.
