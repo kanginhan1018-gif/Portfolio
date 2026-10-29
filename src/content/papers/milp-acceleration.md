@@ -19,9 +19,9 @@ part: 0
 
 | 글 | 읽은 논문 | 한 줄 요약 |
 |---|---|---|
-| [1. Presolve](../milp-presolve/) | Achterberg, Bixby, Gu, Rothberg, Weninger (Gurobi presolve) | 끄면 시간이 9배 늘고 시간 초과 모델이 488개 늘어난다. redundant 제약, 경계 강화, 계수 강화(Big-M 줄이기), 이중 고정 |
+| [1. Presolve](../milp-presolve/) | Achterberg, Bixby, Gu, Rothberg, Weninger (Gurobi presolve) | 끄면 시간이 9배 늘고 시간 초과 모델이 488개 늘어납니다. redundant 제약, 경계 강화, 계수 강화(Big-M 줄이기), 이중 고정 |
 | [2. 분지 규칙](../milp-branching/) | Achterberg, Koch, Martin (2005), Anderson 외 (2020) | 자식의 LP 하한 증가량과 점수 함수(가중합·곱·몫), reliability branching, 점수 함수 비교 실험 설계 |
-| [3. Conflict analysis](../milp-conflict-analysis/) | Achterberg (2007) | 실패한 노드의 원인을 쌍대 광선으로 찾아 제약으로 학습한다. feasible 문제에서는 노드 약 50% 감소, 시간 약 15% 증가 |
+| [3. Conflict analysis](../milp-conflict-analysis/) | Achterberg (2007) | 실패한 노드의 원인을 쌍대 광선으로 찾아 제약으로 학습합니다. feasible 문제에서는 노드 약 50% 감소, 시간 약 15% 증가 |
 | [4. 대칭성](../milp-symmetry/) | Presolve 논문 7.1·8.2절 | 대칭 변수 병합과 orbital fixing. 적용되는 모델이 적지만 적용되면 크다 |
 | [5. 분해](../milp-decomposition/) | Rahmaniani 외 (2017), Lübbecke & Desrosiers (2005) | Benders와 열 생성. 직접 돌려 본 두 개의 작은 예제 |
 
